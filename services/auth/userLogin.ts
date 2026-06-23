@@ -14,11 +14,11 @@ import {
 } from "@/lib/authUtils";
 
 export const userLogin = async (data: {
-  email: string,
-  password: string,
-  redirectTo?: string
+  email: string;
+  password: string;
+  redirectTo?: string;
 }): Promise<any> => {
-  const redirectTo = data?.redirectTo || null
+  const redirectTo = data?.redirectTo || null;
   let accessTokenObj: null | any = null;
   let refreshTokenObj: null | any = null;
   try {
@@ -31,16 +31,19 @@ export const userLogin = async (data: {
       return zodValidator(payload, loginValidationZodSchema);
     }
 
-    const validatedPayload: any = zodValidator(payload, loginValidationZodSchema)?.data;
+    const validatedPayload: any = zodValidator(
+      payload,
+      loginValidationZodSchema,
+    )?.data;
 
-    const res = await serverFetch.post('/auth/login', {
+    const res = await serverFetch.post("/auth/login", {
       body: JSON.stringify(validatedPayload),
       headers: {
-        'content-type': 'application/json'
-      }
-    })
+        "content-type": "application/json",
+      },
+    });
 
-    const result = await res.json()
+    const result = await res.json();
 
     const setCookieHeaders = res.headers.getSetCookie();
 
@@ -88,7 +91,7 @@ export const userLogin = async (data: {
     // Verify token
     const verifiedToken: JwtPayload | string = jwt.verify(
       accessTokenObj.accessToken,
-      process.env.JWT_ACCESS_SECRET as string
+      process.env.JWT_ACCESS_SECRET as string,
     );
 
     if (typeof verifiedToken === "string") {
@@ -115,7 +118,6 @@ export const userLogin = async (data: {
     } else {
       redirect(`/?login=true`);
     }
-
   } catch (err: any) {
     if (err?.digest?.startsWith("NEXT_REDIRECT")) {
       throw err;
@@ -126,7 +128,7 @@ export const userLogin = async (data: {
       message:
         process.env.NEXT_PUBLIC_NODE_ENV === "development"
           ? err?.message
-          : "লগিন সফল হয় নি",
+          : err?.message || "Login Failed",
     };
   }
 };

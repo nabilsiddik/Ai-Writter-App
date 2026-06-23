@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="bg-black border-t border-white/5 pt-20 pb-10 px-6">
+    <footer className="bg-black border-t border-gray-50/9 pt-20 pb-10 px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
         <div className="col-span-2">
           <span className="text-2xl font-bold text-white">SmartAssign.ai</span>
