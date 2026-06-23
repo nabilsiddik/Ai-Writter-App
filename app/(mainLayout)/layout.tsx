@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 import "../globals.css";
 import { getUser } from "@/services/auth/getUser";
 import Header from "@/components/shared/layout/Header";
-import Footer from "@/components/shared/layout/Footer";
+import { Footer } from "@/components/shared/layout/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,8 +11,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-  const user = await getUser()
+  const user = await getUser();
 
   return (
     <html lang="bn">
@@ -23,10 +22,10 @@ export default async function RootLayout({
           </CartProvider>
         </AuthProvider> */}
         {/* <NotificationSystem /> */}
-            {/* <Navbar user = {user} cart = {cart}/> */}
-            <Header/>
-            <main className="py-20 bg-slate-50 ">{children}</main>
-            <Footer />
+        {/* <Navbar user = {user} cart = {cart}/> */}
+        <Header />
+        <main className="py-20 bg-slate-50 ">{children}</main>
+        <Footer />
       </body>
     </html>
   );

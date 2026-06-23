@@ -1,21 +1,13 @@
-'use client'
+"use client";
 
-import AnalysisResultView from '@/components/pages/HomePageContent'
-import PromptInputBox from '@/components/shared/ai/PromptInputBox'
-import { useState } from 'react'
+import HomePageContent from "@/components/pages/HomePageContent";
 
 const page = () => {
-    const [analysisData, setAnalysisData] = useState<any | null>(null)
   return (
     <div>
-        <PromptInputBox setAnalysisData = {setAnalysisData}/>
-        {analysisData && (
-          <div className="mt-10">
-            <AnalysisResultView data={analysisData}/>
-          </div>
-        )}
+      <HomePageContent />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;
