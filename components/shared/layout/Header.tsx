@@ -205,6 +205,12 @@ export default function Navbar() {
       icon: <Layout size={18} />,
     },
     {
+      title: "My Generations",
+      desc: "View all your generations",
+      icon: <Sparkles size={18} />,
+      link: "/my-generations",
+    },
+    {
       title: "University List",
       desc: "Supported institutions",
       icon: <BookOpen size={18} />,
@@ -262,21 +268,24 @@ export default function Navbar() {
                   className="absolute top-full -left-4 pt-4"
                 >
                   <div className="w-64 bg-[#111] border border-white/10 rounded-2xl p-2 shadow-2xl">
-                    {subMenuItems.map((item, i) => (
-                      <button
+                    {subMenuItems?.map((item, i) => (
+                      <Link
                         key={i}
-                        className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-colors text-left group"
+                        href={item?.link || "/"}
+                        className="cursor-pointer"
                       >
-                        <div className="p-2 bg-white/5 rounded-lg group-hover:bg-indigo-500/20 group-hover:text-indigo-400 transition-colors text-gray-400">
-                          {item.icon}
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-white">
-                            {item.title}
-                          </p>
-                          <p className="text-xs text-gray-500">{item.desc}</p>
-                        </div>
-                      </button>
+                        <button className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-colors text-left group cursor-pointer">
+                          <div className="p-2 bg-white/5 rounded-lg group-hover:bg-indigo-500/20 group-hover:text-indigo-400 transition-colors text-gray-400">
+                            {item.icon}
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-white">
+                              {item.title}
+                            </p>
+                            <p className="text-xs text-gray-500">{item.desc}</p>
+                          </div>
+                        </button>
+                      </Link>
                     ))}
                   </div>
                 </motion.div>

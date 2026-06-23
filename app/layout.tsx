@@ -4,23 +4,24 @@ import "./globals.css";
 import { Toaster } from "sonner";
 
 const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap'
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
 const dmSans = DM_Sans({
-  subsets: ['latin'],
-  variable: '--font-dm-sans',
-  display: 'swap'
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | ফলের রাজা",
-    default: "ফলের রাজা - অর্গানিক ফলমুলের সমাহার",
+    template: "%s | Ai Content Writer",
+    default: "Ai Content Writer | Generate Ai Content",
   },
-  description: "Direct from the orchards of Rajshahi. Formalin-free, naturally ripened premium mangoes delivered to your door.",
+  description:
+    "Direct from the orchards of Rajshahi. Formalin-free, naturally ripened premium mangoes delivered to your door.",
   keywords: ["Mango", "Rajshahi Mango", "Himsagar", "Langra", "Fresh Fruit BD"],
   metadataBase: new URL("https://yourdomain.com"),
   alternates: {
