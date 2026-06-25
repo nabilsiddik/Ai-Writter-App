@@ -40,7 +40,6 @@ function LoginContent() {
     try {
       if (isLogin) {
         const res = await userLogin({ email, password, redirectTo: redirect });
-        console.log(res, "login res");
         if (res?.ok) {
           router.push(`/?login=true`);
         }

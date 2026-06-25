@@ -15,8 +15,6 @@ export const downloadReportAction = async () => {
     const res = await serverFetch.get("/admin/export/overview-report");
     const result = await res.json()
 
-    console.log(result);
-    
     if (!res.ok) throw new Error("Failed to fetch PDF");
 
     const arrayBuffer = await res.arrayBuffer();

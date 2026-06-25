@@ -3,9 +3,9 @@ import { serverFetch } from "@/lib/serverFetch";
 
 const getLogedInUser = async () => {
   try {
-    const res = await serverFetch.get("/auth/me");
+    const res = await serverFetch.get("/user/me");
     const user = await res.json();
-    return user?.data;
+    return user?.data || null;
   } catch (error: any) {
     console.log(error);
     return {

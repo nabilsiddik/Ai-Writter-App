@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { generateAssignment, generatePdf } from "@/services/ai/projectAnalyser";
 import { toast } from "sonner";
+import Link from "next/link";
 
 // --- Types ---
 type Section = {
@@ -33,7 +34,9 @@ type AssignmentMetadata = {
   date: string;
 };
 
-export default function HomePageContent() {
+export default function HomePageContent({user}: {
+  user: any
+}) {
   const [step, setStep] = useState<"hero" | "form" | "editing" | "result">(
     "hero",
   );
@@ -53,7 +56,6 @@ export default function HomePageContent() {
     date: new Date().toLocaleDateString(),
   });
 
-  console.log(formData, "form data");
 
   const handleGenerateAIContent = async () => {
     setLoading(true);
@@ -63,8 +65,6 @@ export default function HomePageContent() {
         selectedTopics: ["Introduction", "Analysis", "Conclusion"],
       });
       const data = res?.data;
-
-      console.log(res, "gen res");
 
       if (res?.success) {
         toast.success("Generated");
@@ -82,8 +82,6 @@ export default function HomePageContent() {
     }
   };
 
-  console.log(sections, assignmentId, "sec");
-
   const handleFinalizePDF = async () => {
     setLoading(true);
     try {
@@ -91,14 +89,12 @@ export default function HomePageContent() {
       const res = await generatePdf(assignmentId, {
         sections,
       });
-      console.log(res, "res pdf gen");
 
       if (res?.success) {
         toast.success("Generated");
 
         if (res?.data) {
           const data = res?.data;
-          console.log(data?.url);
           setPdfUrl(data?.url);
           setStep("result");
         }
@@ -113,7 +109,7 @@ export default function HomePageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-indigo-500/30 font-sans">
+    <div className="bg-[#050505] text-white selection:bg-indigo-500/30 font-sans">
       {/* --- Gradient Backgrounds --- */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-indigo-600/20 blur-[120px] rounded-full" />
@@ -143,108 +139,18 @@ export default function HomePageContent() {
                 click.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link target="_blank" href={user ? '/ai-content-writter/tools' : '/login'}>
                 <button
                   onClick={() => setStep("form")}
-                  className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold text-lg flex items-center gap-2 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-indigo-500/25"
+                  className="px-8 py-4 bg-indigo-600 cursor-pointer hover:bg-indigo-500 rounded-xl font-bold text-lg flex items-center gap-2 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-indigo-500/25"
                 >
-                  Start My Assignment <ChevronRight size={20} />
+                  Get Started For Free <ChevronRight size={20} />
                 </button>
+                </Link>
                 <button className="px-8 py-4 bg-white/5 border border-white/10 rounded-xl font-bold text-lg hover:bg-white/10 transition-all">
                   View Templates
                 </button>
               </div>
-            </motion.div>
-          )}
-
-          {/* --- FORM STEP --- */}
-          {step === "form" && (
-            <motion.div
-              key="form"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="max-w-3xl mx-auto bg-white/5 border border-white/10 p-8 rounded-3xl backdrop-blur-xl shadow-2xl"
-            >
-              <div className="flex items-center gap-3 mb-8">
-                <GraduationCap className="text-indigo-400" size={32} />
-                <div>
-                  <h2 className="text-2xl font-bold">Assignment Details</h2>
-                  <p className="text-gray-400 text-sm">
-                    Fill in the metadata for your cover page.
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {[
-                  {
-                    label: "University Name",
-                    key: "universityName",
-                    icon: <GraduationCap size={16} />,
-                  },
-                  {
-                    label: "Assignment Topic",
-                    key: "topic",
-                    icon: <Edit3 size={16} />,
-                  },
-                  {
-                    label: "Submitted By",
-                    key: "submittedBy",
-                    icon: <FileText size={16} />,
-                  },
-                  {
-                    label: "Submitted To",
-                    key: "submittedTo",
-                    icon: <Send size={16} />,
-                  },
-                  {
-                    label: "Section",
-                    key: "section",
-                    icon: <Sparkles size={16} />,
-                  },
-                  {
-                    label: "Intake",
-                    key: "intake",
-                    icon: <Sparkles size={16} />,
-                  },
-                  {
-                    label: "Assignment No",
-                    key: "assignmentNo",
-                    icon: <Sparkles size={16} />,
-                  },
-                  { label: "Date", key: "date", icon: <Sparkles size={16} /> },
-                ].map((field) => (
-                  <div key={field.key} className="space-y-2">
-                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-                      {field.icon} {field.label}
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
-                      placeholder={`Enter ${field.label.toLowerCase()}...`}
-                      value={(formData as any)[field.key]}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          [field.key]: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-
-              <button
-                disabled={loading}
-                onClick={handleGenerateAIContent}
-                className="w-full mt-10 py-4 bg-white text-black rounded-xl font-bold text-lg hover:bg-gray-200 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
-              >
-                {loading ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  <Sparkles size={20} />
-                )}
-                {loading ? "AI is writing..." : "Generate AI Content"}
-              </button>
             </motion.div>
           )}
 

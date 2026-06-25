@@ -41,8 +41,6 @@ export default function MyGenerations({ generations }: { generations: any }) {
   const [loading, setLoading] = useState(!generations);
   const [searchQuery, setSearchQuery] = useState("");
 
-  console.log(generations, "hello gen");
-
   return (
     <div className="min-h-screen bg-[#020202] text-white selection:bg-indigo-500/30">
       {/* --- Dynamic Background Atmosphere --- */}
@@ -239,9 +237,11 @@ function GenerationCard({ gen }: { gen: any }) {
         >
           <Download size={14} /> Download
         </a>
-        <button className="flex items-center justify-center gap-2 py-3.5 bg-white/[0.05] border border-white/10 hover:bg-white/10 text-white rounded-2xl text-xs font-black transition-all">
+        <Link target="_blank" href={`/generation-details/${gen?.id}`}>
+          <button className="cursor-pointer flex items-center justify-center gap-2 py-3.5 bg-white/[0.05] border border-white/10 hover:bg-white/10 text-white rounded-2xl text-xs font-black transition-all">
           <ExternalLink size={14} /> Details
         </button>
+        </Link>
       </div>
     </motion.div>
   );

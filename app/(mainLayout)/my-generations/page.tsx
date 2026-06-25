@@ -3,7 +3,6 @@ import MyGenerations from "./MyGenerations";
 
 const page = async () => {
   const generations = await getMyGenerations();
-  console.log(generations, "gen");
   return (
     <div>
       <MyGenerations generations={generations} />
