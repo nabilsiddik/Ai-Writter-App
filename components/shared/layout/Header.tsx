@@ -191,14 +191,12 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
-export default function Navbar({user}: {
-  user: any
-}) {
+export default function Navbar({ user }: { user: any }) {
   const [isOpen, setIsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -237,12 +235,14 @@ export default function Navbar({user}: {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="p-2 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-lg group-hover:rotate-12 transition-transform shadow-lg shadow-indigo-500/20">
+          {/* <div className="p-2 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-lg group-hover:rotate-12 transition-transform shadow-lg shadow-indigo-500/20">
             <Sparkles size={20} className="text-white" />
           </div>
           <span className="text-xl font-bold tracking-tighter text-white flex items-center gap-1">
-            <span className="text-indigo-500">Ai</span> ContentWritter<span className="text-indigo-500"></span>
-          </span>
+            <span className="text-indigo-500">Ai</span> ContentWritter
+            <span className="text-indigo-500"></span>
+          </span> */}
+          H
         </Link>
 
         {/* Desktop Menu */}
@@ -311,58 +311,65 @@ export default function Navbar({user}: {
 
         {/* Profile & CTA */}
         <div className="flex items-center gap-4">
-          {user?.id ? 
-          
+          {user?.id ? (
             <div className="relative">
-            <button
-              onClick={() => setProfileOpen(!profileOpen)}
-              className="w-10 h-10 rounded-full border-2 border-white/10 overflow-hidden hover:border-indigo-500 transition-colors bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center"
-            >
-              <User size={20} className="text-gray-400" />
-            </button>
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="w-10 h-10 rounded-full border-2 border-white/10 overflow-hidden hover:border-indigo-500 transition-colors bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center"
+              >
+                <User size={20} className="text-gray-400" />
+              </button>
 
-            <AnimatePresence>
-              {profileOpen && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className="absolute right-0 mt-3 w-56 bg-[#111] border border-white/10 rounded-2xl p-2 shadow-2xl"
-                >
-                  <div className="px-3 py-2 border-b border-white/5 mb-1">
-                    <p className="text-sm font-bold text-white">{user?.fullName}</p>
-                    <p className="text-xs text-gray-500">{user?.email}</p>
-                    <p className="text-xs text-gray-500">{user?.plan === 'STARTER' || user?.plan === 'PREMIUM' ? 'Premium Member' : 'Free Member'}</p>
-                  </div>
-                  {/* <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg text-sm text-gray-300 transition-colors">
+              <AnimatePresence>
+                {profileOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="absolute right-0 mt-3 w-56 bg-[#111] border border-white/10 rounded-2xl p-2 shadow-2xl"
+                  >
+                    <div className="px-3 py-2 border-b border-white/5 mb-1">
+                      <p className="text-sm font-bold text-white">
+                        {user?.fullName}
+                      </p>
+                      <p className="text-xs text-gray-500">{user?.email}</p>
+                      <p className="text-xs text-gray-500">
+                        {user?.plan === "STARTER" || user?.plan === "PREMIUM"
+                          ? "Premium Member"
+                          : "Free Member"}
+                      </p>
+                    </div>
+                    {/* <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg text-sm text-gray-300 transition-colors">
                     <Settings size={16} /> Settings
                   </button> */}
-                  <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg text-sm text-gray-300 transition-colors">
-                    <CreditCard size={16} /> Subscription
-                  </button>
-                  <button onClick={async() => {
-                    const res = await userLogout()
-                    if(res?.success){
-                      toast.success('Loged Out')
-                      router.push('/')
-                    }else{
-                      toast.error('Logout Failed')
-                    }
-                  }} className="w-full cursor-pointer flex items-center gap-3 px-3 py-2 hover:bg-red-500/10 text-red-400 rounded-lg text-sm transition-colors mt-1">
-                    <LogOut size={16} /> Logout
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          :
-
-          <Link href={'/login'}>
-            <Button className="w-full relative group overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 disabled:from-gray-700 disabled:to-gray-800 text-white font-bold py-4 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer">Login / Signup</Button>
-          </Link>
-          
-          }
+                    <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg text-sm text-gray-300 transition-colors">
+                      <CreditCard size={16} /> Subscription
+                    </button>
+                    <button
+                      onClick={async () => {
+                        const res = await userLogout();
+                        if (res?.success) {
+                          toast.success("Loged Out");
+                          router.push("/");
+                        } else {
+                          toast.error("Logout Failed");
+                        }
+                      }}
+                      className="w-full cursor-pointer flex items-center gap-3 px-3 py-2 hover:bg-red-500/10 text-red-400 rounded-lg text-sm transition-colors mt-1"
+                    >
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <Link href={"/login"}>
+              <Button className="w-full relative group overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 disabled:from-gray-700 disabled:to-gray-800 text-white font-bold py-4 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer">
+                Login / Signup
+              </Button>
+            </Link>
+          )}
 
           <button
             className="md:hidden text-white"

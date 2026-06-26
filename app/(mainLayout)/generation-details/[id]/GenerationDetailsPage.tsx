@@ -1,250 +1,387 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  FileText, 
-  University, 
-  User, 
-  Download, 
-  Save, 
+import {
+  University,
+  User,
+  Download,
   ChevronLeft,
   Sparkles,
   Loader2,
-  Calendar,
   Layers,
-  CheckCircle2
+  CheckCircle2,
+  Hash,
+  Calendar,
+  PenLine,
+  File,
 } from "lucide-react";
 import { toast } from "sonner";
+import { generatePDF, openInGoogleDoc } from "@/services/generation";
+import { FaFilePdf, FaMicrosoft } from "react-icons/fa6";
+import PageHeader from "@/components/shared/PageHeader";
 
-// --- Animation Variants ---
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-export default function GenerationDetails() {
-  const params = useParams();
+export default function GenerationDetails({ genDetails }: { genDetails: any }) {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [assignment, setAssignment] = useState<any>(null);
-  const [editableSections, setEditableSections] = useState<any[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
 
+  // Initialize state from the passed genDetails prop
+  const [assignment, setAssignment] = useState<any>(genDetails);
+  const [editableSections, setEditableSections] = useState<any[]>(
+    genDetails?.sections || [],
+  );
+
+  // Sync state if props change (useful for real-time updates)
   useEffect(() => {
-    const fetchAssignmentDetails = async () => {
-      try {
-        // Replace with your real API call:
-        // const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/assignments/${params.id}`);
-        // const data = await res.json();
-        // setAssignment(data?.data);
-        // setEditableSections(data?.data?.sections || []);
-
-        // Mocking your specific JSON response
-        const mockData = {
-          id: params?.id,
-          universityName: "Daffodil International University",
-          topic: "Dark side of smoking",
-          submittedBy: "Nabil Siddik",
-          submittedTo: "Prof. Dr. Muhammad Yunus",
-          section: "09",
-          intake: "49",
-          assignmentNo: "01",
-          status: "GENERATED",
-          createdAt: "2026-06-23T02:34:26.856Z",
-          sections: [
-            { topic: "Introduction", content: "Smoking is a widely practiced habit..." },
-            { topic: "Physical Consequences", content: "Smoking is a leading cause..." },
-            { topic: "Conclusion", content: "In conclusion, the dark side..." }
-          ]
-        };
-
-        setAssignment(mockData);
-        setEditableSections(mockData?.sections || []);
-      } catch (error) {
-        toast.error("Failed to load assignment");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (params?.id) fetchAssignmentDetails();
-  }, [params?.id]);
+    if (genDetails) {
+      setAssignment(genDetails);
+      setEditableSections(genDetails?.sections || []);
+    }
+  }, [genDetails]);
 
   const handleSectionUpdate = (index: number, field: string, value: string) => {
     const updated = [...editableSections];
-    updated[index][field] = value;
-    setEditableSections(updated);
-  };
-
-  const handleGeneratePDF = async () => {
-    setIsSaving(true);
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/assignments/${params.id}/generate-pdf`, {
-        method: "POST",
-        headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
-        },
-        body: JSON.stringify({ sections: editableSections }),
-      });
-      const data = await response.json();
-      
-      if (data?.success) {
-        toast.success("PDF Generated Successfully!");
-        if (data?.data?.url) window.open(data?.data?.url, "_blank");
-      }
-    } catch (err) {
-      toast.error("Error generating PDF");
-    } finally {
-      setIsSaving(false);
+    if (updated[index]) {
+      updated[index][field] = value;
+      setEditableSections(updated);
     }
   };
 
-  if (loading) return (
-    <div className="min-h-screen bg-[#020202] flex items-center justify-center">
-      <Loader2 className="animate-spin text-indigo-500" size={48} />
-    </div>
-  );
+  const handleExportInPDF = async () => {
+    if (!assignment?.id) return toast.error("Document ID missing");
+
+    setIsGenerating(true);
+    const payload = {
+      sections: editableSections,
+    };
+
+    try {
+      const result = await generatePDF(assignment?.id, payload);
+
+      console.log(result, "pdf res");
+
+      if (result?.success) {
+        toast.success("PDF Generated Successfully!");
+        if (result?.data?.url) {
+          router.push(result?.data?.url);
+        }
+      } else {
+        toast.error(result?.message || "Generation failed.");
+      }
+    } catch (err: any) {
+      toast.error("Internal Server Error occurred.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleOpenInGoogleDoc = async () => {
+    if (!assignment?.id) return toast.error("Document ID missing");
+
+    setIsGenerating(true);
+    const payload = {
+      sections: editableSections,
+    };
+
+    try {
+      const result = await openInGoogleDoc(assignment?.id, payload);
+
+      console.log(result, "google res");
+
+      if (result?.success) {
+        toast.success("Exported in Google doc Successfully!");
+        if (result?.data?.url) {
+          router.push(result?.data?.url);
+        }
+      } else if (result?.error?.response?.data?.error === "invalid_grant") {
+        toast.error("You need to login with google with required permissions.");
+      } else {
+        toast.error(result?.message || "Exporting failed.");
+      }
+    } catch (err: any) {
+      toast.error("Internal Server Error occurred.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleExportInMsWord = async () => {};
 
   return (
-    <div className="min-h-screen bg-[#020202] text-white selection:bg-indigo-500/30">
-      
-      {/* Background Orbs */}
+    <div className="min-h-screen bg-[#020202] text-white selection:bg-indigo-500/30 font-sans">
+      <PageHeader
+        title="Here is your Generation Details"
+        description={
+          "You can edit the generated text and then export to pdf, google doc or in a microsoft word docx format. Check the google drive save checkbox to save your file in your google drive while exporting."
+        }
+      />
+      {/* Background Ambience */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-600/10 blur-[140px] rounded-full" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-600/10 blur-[140px] rounded-full" />
+        <div className="absolute top-[-5%] right-[-5%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-5%] left-[-5%] w-[40%] h-[40%] bg-purple-600/10 blur-[120px] rounded-full animate-pulse" />
       </div>
 
-      <main className="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-24">
-        
-        {/* --- Top Navigation & Actions --- */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
-          <button 
+      <main className="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-40">
+        {/* Navigation Bar */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16">
+          <button
             onClick={() => router.back()}
-            className="flex items-center gap-3 text-gray-400 hover:text-white transition-all group text-lg"
+            className="flex items-center gap-4 text-gray-400 hover:text-white transition-all group text-xl font-bold cursor-pointer"
           >
-            <div className="p-2 rounded-full bg-white/5 group-hover:bg-white/10">
-                <ChevronLeft size={24} />
+            <div className="p-3 rounded-2xl bg-white/5 group-hover:bg-white/10 border border-white/5 group-hover:border-white/20 transition-all">
+              <ChevronLeft size={24} />
             </div>
             Back to Library
           </button>
 
-          <div className="flex items-center gap-4 w-full md:w-auto">
-            <button 
-              onClick={handleGeneratePDF}
-              disabled={isSaving}
-              className="flex-1 md:flex-none flex items-center justify-center gap-3 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl font-black text-lg transition-all shadow-xl shadow-indigo-500/20 disabled:opacity-50"
+          <div className="flex flex-wrap items-center flex-col lg:flex-row gap-6 w-full md:w-auto">
+            <button
+              onClick={handleExportInPDF}
+              disabled={isGenerating}
+              className="flex-1 md:flex-none flex items-center justify-center gap-4 px-10 py-5 bg-white text-black hover:bg-indigo-600 hover:text-white rounded-[24px] font-black text-xl transition-all shadow-2xl disabled:opacity-50 cursor-pointer"
             >
-              {isSaving ? <Loader2 className="animate-spin" size={20} /> : <Download size={20} />}
-              Generate PDF
+              {isGenerating ? (
+                <Loader2 className="animate-spin" size={24} />
+              ) : (
+                <FaFilePdf size={24} className="text-red-500" />
+              )}
+              {isGenerating ? "Processing PDF..." : "Generate PDF"}
+            </button>
+
+            <button
+              onClick={handleOpenInGoogleDoc}
+              disabled={isGenerating}
+              className="flex-1 md:flex-none flex items-center justify-center gap-4 px-10 py-5 bg-white text-black hover:bg-indigo-600 hover:text-white rounded-[24px] font-black text-xl transition-all shadow-2xl disabled:opacity-50 cursor-pointer"
+            >
+              {isGenerating ? (
+                <Loader2 className="animate-spin" size={24} />
+              ) : (
+                <File size={24} />
+              )}
+              {isGenerating ? "Opening..." : "Open In Google Docs"}
+            </button>
+
+            <button
+              onClick={handleExportInMsWord}
+              disabled={isGenerating}
+              className="flex-1 md:flex-none flex items-center justify-center gap-4 px-10 py-5 bg-white text-black hover:bg-indigo-600 hover:text-white rounded-[24px] font-black text-xl transition-all shadow-2xl disabled:opacity-50 cursor-pointer"
+            >
+              {isGenerating ? (
+                <Loader2 className="animate-spin" size={24} />
+              ) : (
+                <FaMicrosoft size={24} />
+              )}
+              {isGenerating ? "Exporting Docx..." : "Export In MS Docx"}
             </button>
           </div>
         </div>
 
-        {/* --- Hero Metadata Section --- */}
-        <motion.section 
-          variants={fadeIn} initial="hidden" animate="visible"
-          className="bg-white/[0.03] border border-white/10 rounded-[40px] p-8 md:p-12 mb-12 backdrop-blur-xl"
+        {/* <div>
+          <button
+            onClick={handleFinalizeAndDownload}
+            disabled={isGenerating}
+            className="flex-1 md:flex-none flex items-center justify-center gap-4 px-10 py-5 bg-white text-black hover:bg-indigo-600 hover:text-white rounded-[24px] font-black text-xl transition-all shadow-2xl disabled:opacity-50 cursor-pointer"
+          >
+            {isGenerating ? (
+              <Loader2 className="animate-spin" size={24} />
+            ) : (
+              <Download size={24} />
+            )}
+            {isGenerating ? "Downloading PDF..." : "Download PDF"}
+          </button>
+        </div> */}
+
+        {/* Premium Metadata Header */}
+        <motion.section
+          variants={fadeIn}
+          initial="hidden"
+          animate="visible"
+          className="bg-white/[0.02] border border-white/10 rounded-[50px] p-10 md:p-16 mb-16 backdrop-blur-3xl shadow-[0_30px_100px_rgba(0,0,0,0.5)]"
         >
-          <div className="flex flex-col lg:flex-row gap-12">
-            <div className="flex-1 space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
+          <div className="flex flex-col lg:flex-row gap-16">
+            <div className="flex-1 space-y-8">
+              <div className="inline-flex items-center gap-3 px-5 py-2 bg-white/5 border border-white/10 rounded-full">
                 <Sparkles size={18} className="text-indigo-400" />
-                <span className="text-base font-bold text-indigo-400 uppercase tracking-widest">
-                    {assignment?.status || "Processing"}
+                <span className="text-base font-black text-indigo-400 uppercase tracking-[0.2em]">
+                  {assignment?.status || "GENERATED"}
                 </span>
               </div>
-              <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-tight">
+
+              <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[1.1] bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-500">
                 {assignment?.topic || "Loading Topic..."}
               </h1>
-              <div className="flex flex-wrap gap-6 pt-4">
-                <div className="flex items-center gap-3 text-gray-400 text-lg">
-                  <University size={22} className="text-indigo-500" />
-                  {assignment?.universityName}
+
+              <div className="flex flex-wrap gap-10 pt-4">
+                <div className="flex items-center gap-4 text-gray-400 text-xl font-medium">
+                  <University size={26} className="text-indigo-500" />
+                  {assignment?.universityName || "General University"}
                 </div>
-                <div className="flex items-center gap-3 text-gray-400 text-lg">
-                  <Layers size={22} className="text-purple-500" />
-                  Section {assignment?.section} | Intake {assignment?.intake}
+                <div className="flex items-center gap-4 text-gray-400 text-xl font-medium">
+                  <Layers size={26} className="text-purple-500" />
+                  Section {assignment?.section || "N/A"}
+                </div>
+                <div className="flex items-center gap-4 text-gray-400 text-xl font-medium">
+                  <Hash size={26} className="text-emerald-500" />
+                  Intake {assignment?.intake || "N/A"}
                 </div>
               </div>
             </div>
 
-            <div className="lg:w-1/3 bg-white/[0.03] border border-white/5 rounded-3xl p-8 space-y-6">
-                <div className="flex items-center justify-between">
-                    <span className="text-gray-500 text-lg font-medium">Submitted To</span>
-                    <span className="font-bold text-lg text-right">{assignment?.submittedTo}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                    <span className="text-gray-500 text-lg font-medium">Author</span>
-                    <span className="font-bold text-lg text-right">{assignment?.submittedBy}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                    <span className="text-gray-500 text-lg font-medium">Assignment No</span>
-                    <span className="font-bold text-lg">{assignment?.assignmentNo || "01"}</span>
-                </div>
+            {/* Submission Detail Card */}
+            <div className="lg:w-[380px] bg-white/[0.03] border border-white/5 rounded-[40px] p-10 space-y-8 flex flex-col justify-center">
+              <div className="space-y-2">
+                <p className="text-gray-500 text-base font-black uppercase tracking-widest flex items-center gap-2">
+                  <User size={16} /> Submitted To
+                </p>
+                <p className="text-2xl font-bold">
+                  {assignment?.submittedTo || "N/A"}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-gray-500 text-base font-black uppercase tracking-widest flex items-center gap-2">
+                  <PenLine size={16} /> Submitted By
+                </p>
+                <p className="text-2xl font-bold">
+                  {assignment?.submittedBy || "N/A"}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-gray-500 text-base font-black uppercase tracking-widest flex items-center gap-2">
+                  <Calendar size={16} /> Assignment No
+                </p>
+                <p className="text-2xl font-bold">
+                  {assignment?.assignmentNo || "01"}
+                </p>
+              </div>
             </div>
           </div>
         </motion.section>
 
-        {/* --- Interactive Editor Section --- */}
-        <section className="space-y-8">
-          <div className="flex items-center gap-4 mb-8">
-             <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent to-white/10" />
-             <h2 className="text-2xl font-black uppercase tracking-widest text-gray-500">Edit Content</h2>
-             <div className="h-[2px] flex-1 bg-gradient-to-l from-transparent to-white/10" />
+        {/* Content Editor Section */}
+        <section className="space-y-12">
+          <div className="flex items-center gap-6 mb-12">
+            <h2 className="text-3xl font-black uppercase tracking-[0.2em] text-gray-600">
+              Refine AI Content
+            </h2>
+            <div className="h-[1px] flex-1 bg-white/10" />
           </div>
 
-          <AnimatePresence>
-            {editableSections?.map((sec, index) => (
-              <motion.div 
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white/[0.02] border border-white/10 rounded-[35px] overflow-hidden hover:border-indigo-500/30 transition-all group"
-              >
-                {/* Section Title Input */}
-                <div className="p-8 border-b border-white/5 bg-white/[0.01]">
-                   <label className="text-xs font-black text-indigo-500 uppercase tracking-widest mb-3 block">Topic Title</label>
-                   <input 
-                      className="w-full bg-transparent text-2xl font-bold text-white focus:outline-none placeholder:text-gray-700"
-                      value={sec?.topic || ""}
-                      onChange={(e) => handleSectionUpdate(index, "topic", e.target.value)}
-                   />
-                </div>
+          <div className="grid gap-12">
+            <AnimatePresence>
+              {editableSections?.length > 0 &&
+                editableSections?.map((sec: any, index: number) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-white/[0.015] border border-white/10 rounded-[45px] overflow-hidden hover:border-indigo-500/40 transition-all duration-500 group shadow-2xl"
+                  >
+                    {/* Section Title Input */}
+                    <div className="p-10 border-b border-white/5 bg-white/[0.01]">
+                      <input
+                        className="w-full bg-transparent text-3xl font-black text-white focus:outline-none placeholder:text-gray-800 transition-all"
+                        value={sec?.topic || ""}
+                        onChange={(e) =>
+                          handleSectionUpdate(index, "topic", e.target.value)
+                        }
+                        placeholder="Enter topic heading..."
+                      />
+                    </div>
 
-                {/* Section Content Textarea */}
-                <div className="p-8">
-                   <label className="text-xs font-black text-purple-500 uppercase tracking-widest mb-3 block">Markdown Content</label>
-                   <textarea 
-                      className="w-full bg-transparent text-xl text-gray-400 leading-relaxed min-h-[250px] focus:outline-none resize-none placeholder:text-gray-800"
-                      value={sec?.content || ""}
-                      onChange={(e) => handleSectionUpdate(index, "content", e.target.value)}
-                   />
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+                    {/* Section Content Textarea */}
+                    <div className="p-10">
+                      <textarea
+                        rows={8}
+                        className="w-full bg-transparent text-2xl text-gray-400 font-medium leading-relaxed focus:outline-none resize-none placeholder:text-gray-900 transition-all"
+                        value={sec?.content || ""}
+                        onChange={(e) =>
+                          handleSectionUpdate(index, "content", e.target.value)
+                        }
+                        placeholder="Start writing or editing AI content..."
+                      />
+                    </div>
+                  </motion.div>
+                ))}
+            </AnimatePresence>
+          </div>
         </section>
 
-        {/* --- Bottom Final Action --- */}
-        <motion.div 
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-          className="mt-20 text-center"
+        {/* Final Execution Button */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="mt-32 text-center"
         >
-           <button 
-             onClick={handleGeneratePDF}
-             disabled={isSaving}
-             className="inline-flex items-center gap-4 px-12 py-6 bg-white text-black hover:bg-indigo-600 hover:text-white rounded-[30px] font-black text-2xl transition-all shadow-2xl disabled:opacity-50"
-           >
-             {isSaving ? <Loader2 className="animate-spin" /> : <CheckCircle2 />}
-             Finalize and Generate PDF
-           </button>
-           <p className="mt-6 text-gray-500 text-lg italic">The generated PDF will follow your University's Cover Page style.</p>
-        </motion.div>
+          <div className="max-w-3xl mx-auto p-12 bg-gradient-to-br from-indigo-900/20 to-transparent border border-white/10 rounded-[50px] backdrop-blur-xl">
+            <h2 className="text-4xl font-bold mb-6">Ready to finalize?</h2>
+            <p className="text-gray-500 text-xl mb-12 leading-relaxed">
+              Once you are happy with the edits, click the button below to
+              generate a professionally formatted PDF including your
+              university's specific cover page.
+            </p>
+            {/* <button
+              onClick={handleFinalizeAndDownload}
+              disabled={isGenerating}
+              className="inline-flex items-center gap-6 px-16 py-8 bg-indigo-600 hover:bg-indigo-500 text-white rounded-[35px] font-black text-3xl transition-all shadow-[0_20px_50px_rgba(79,70,229,0.3)] disabled:opacity-50 cursor-pointer active:scale-95"
+            >
+              {isGenerating ? (
+                <Loader2 className="animate-spin" size={32} />
+              ) : (
+                <CheckCircle2 size={32} />
+              )}
+              {isGenerating ? "GENERATING..." : "GENERATE FINAL PDF"}
+            </button> */}
 
+            <div className="flex flex-wrap items-center flex-col lg:flex-row gap-6 w-full md:w-auto">
+              <button
+                onClick={handleExportInPDF}
+                disabled={isGenerating}
+                className="flex-1 md:flex-none flex items-center justify-center gap-4 px-10 py-5 bg-white text-black hover:bg-indigo-600 hover:text-white rounded-[24px] font-black text-xl transition-all shadow-2xl disabled:opacity-50 cursor-pointer"
+              >
+                {isGenerating ? (
+                  <Loader2 className="animate-spin" size={24} />
+                ) : (
+                  <FaFilePdf size={24} className="text-red-500" />
+                )}
+                {isGenerating ? "Processing PDF..." : "Generate PDF"}
+              </button>
+
+              <button
+                onClick={handleOpenInGoogleDoc}
+                disabled={isGenerating}
+                className="flex-1 md:flex-none flex items-center justify-center gap-4 px-10 py-5 bg-white text-black hover:bg-indigo-600 hover:text-white rounded-[24px] font-black text-xl transition-all shadow-2xl disabled:opacity-50 cursor-pointer"
+              >
+                {isGenerating ? (
+                  <Loader2 className="animate-spin" size={24} />
+                ) : (
+                  <File size={24} />
+                )}
+                {isGenerating ? "Opening..." : "Open In Google Docs"}
+              </button>
+
+              <button
+                onClick={handleExportInMsWord}
+                disabled={isGenerating}
+                className="flex-1 md:flex-none flex items-center justify-center gap-4 px-10 py-5 bg-white text-black hover:bg-indigo-600 hover:text-white rounded-[24px] font-black text-xl transition-all shadow-2xl disabled:opacity-50 cursor-pointer"
+              >
+                {isGenerating ? (
+                  <Loader2 className="animate-spin" size={24} />
+                ) : (
+                  <FaMicrosoft size={24} />
+                )}
+                {isGenerating ? "Exporting Docx..." : "Export In MS Docx"}
+              </button>
+            </div>
+          </div>
+        </motion.div>
       </main>
     </div>
   );

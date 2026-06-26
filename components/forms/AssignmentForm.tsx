@@ -2,19 +2,20 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { 
-  GraduationCap, 
-  User, 
-  Send, 
-  Layers, 
-  Hash, 
-  PenTool, 
+import {
+  GraduationCap,
+  User,
+  Send,
+  Layers,
+  Hash,
+  PenTool,
   Sparkles,
   Loader2,
-  BookOpenText
+  BookOpenText,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { generateContent } from "@/services/generation";
 
 const AssignmentForm = () => {
   const router = useRouter();
@@ -29,66 +30,64 @@ const AssignmentForm = () => {
     submittedTo: "",
     topic: "",
     prompt: "",
-    docType: "ASSIGNMENT"
+    docType: "ASSIGNMENT",
   });
 
-  const inputStyles = "w-full bg-white/[0.03] border border-white/10 rounded-2xl md:rounded-[28px] px-6 md:px-8 py-4 md:py-6 text-base md:text-xl text-white placeholder:text-white/70 focus:outline-none focus:border-indigo-500 focus:bg-white/[0.06] transition-all duration-300 shadow-xl";
-  const labelStyles = "text-xs md:text-sm font-black uppercase tracking-[0.15em] text-indigo-400 flex items-center gap-2 md:gap-3 ml-2";
+  const inputStyles =
+    "w-full bg-white/[0.03] border border-white/10 rounded-2xl md:rounded-[28px] px-6 md:px-8 py-4 md:py-6 text-base md:text-xl text-white placeholder:text-white/70 focus:outline-none focus:border-indigo-500 focus:bg-white/[0.06] transition-all duration-300 shadow-xl";
+  const labelStyles =
+    "text-xs md:text-sm font-black uppercase tracking-[0.15em] text-indigo-400 flex items-center gap-2 md:gap-3 ml-2";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    console.log(formData, 'my form');
+    console.log(formData, "my form");
 
-    // try {
-    //   const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/assignments/generate-assignment`, {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       "Authorization": `Bearer ${localStorage.getItem("token")}`
-    //     },
-    //     body: JSON.stringify({
-    //         ...formData,
-    //         additionalInfo: formData.prompt,
-    //         selectedTopics: ["Introduction", "Analysis", "Key Findings", "Conclusion"]
-    //     }),
-    //   });
+    const toastId = toast.loading("Generating assignment content...");
 
-    //   const data = await response.json();
+    try {
+      const res = await generateContent(formData);
+      const data = await res.data;
 
-    //   if (data?.success) {
-    //     toast.success("Intelligence Engine Started!");
-    //     router.push(`/generation-details/${data?.data?.id}`);
-    //   } else {
-    //     toast.error(data?.message || "Generation failed.");
-    //   }
-    // } catch (error) {
-    //   toast.error("Connection error occurred.");
-    // } finally {
-    //   setLoading(false);
-    // }
+      console.log(res, "my res");
+
+      if (res?.success) {
+        toast.success("Assignment Content Generated", { id: toastId });
+        router.push(`/generation-details/${data?.id}`);
+      } else {
+        toast.error(data?.message || "Content Generation failed.", {
+          id: toastId,
+        });
+      }
+    } catch (error) {
+      toast.error("Internal server error occurred.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="w-full max-w-7xl mx-auto px-5 md:px-10 my-10"
     >
       <form onSubmit={handleSubmit} className="space-y-8 md:space-y-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
-          
           <div className="space-y-3 md:space-y-4">
             <label className={labelStyles}>
-              <GraduationCap size={16} className="md:w-[18px]" /> University Name
+              <GraduationCap size={16} className="md:w-[18px]" /> University
+              Name
             </label>
             <input
               required
               className={inputStyles}
               placeholder="e.g. Daffodil International University"
               value={formData.universityName}
-              onChange={(e) => setFormData({ ...formData, universityName: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, universityName: e.target.value })
+              }
             />
           </div>
 
@@ -101,7 +100,9 @@ const AssignmentForm = () => {
               className={inputStyles}
               placeholder="e.g. Soil testing Importance"
               value={formData.topic}
-              onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, topic: e.target.value })
+              }
             />
           </div>
 
@@ -114,7 +115,9 @@ const AssignmentForm = () => {
               className={inputStyles}
               placeholder="Your full name"
               value={formData.submittedBy}
-              onChange={(e) => setFormData({ ...formData, submittedBy: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, submittedBy: e.target.value })
+              }
             />
           </div>
 
@@ -127,7 +130,9 @@ const AssignmentForm = () => {
               className={inputStyles}
               placeholder="Instructor's name"
               value={formData.submittedTo}
-              onChange={(e) => setFormData({ ...formData, submittedTo: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, submittedTo: e.target.value })
+              }
             />
           </div>
 
@@ -140,7 +145,9 @@ const AssignmentForm = () => {
                 className={inputStyles}
                 placeholder="09"
                 value={formData.section}
-                onChange={(e) => setFormData({ ...formData, section: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, section: e.target.value })
+                }
               />
             </div>
             <div className="space-y-3 md:space-y-4">
@@ -151,7 +158,9 @@ const AssignmentForm = () => {
                 className={inputStyles}
                 placeholder="49"
                 value={formData.intake}
-                onChange={(e) => setFormData({ ...formData, intake: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, intake: e.target.value })
+                }
               />
             </div>
             <div className="space-y-3 md:space-y-4">
@@ -162,7 +171,9 @@ const AssignmentForm = () => {
                 className={inputStyles}
                 placeholder="01"
                 value={formData.assignmentNo}
-                onChange={(e) => setFormData({ ...formData, assignmentNo: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, assignmentNo: e.target.value })
+                }
               />
             </div>
           </div>
@@ -177,7 +188,9 @@ const AssignmentForm = () => {
               className="w-full bg-white/[0.03] border border-white/10 rounded-[28px] md:rounded-[40px] px-6 md:px-10 py-6 md:py-8 text-base md:text-xl text-white placeholder:text-white/70 focus:outline-none focus:border-indigo-500 focus:bg-white/[0.06] transition-all duration-300 shadow-xl resize-none"
               placeholder="Paste the question or detailed instructions here..."
               value={formData.prompt}
-              onChange={(e) => setFormData({ ...formData, prompt: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, prompt: e.target.value })
+              }
             />
           </div>
         </div>
@@ -194,7 +207,10 @@ const AssignmentForm = () => {
               <Loader2 className="animate-spin" size={24} />
             ) : (
               <>
-                <Sparkles size={24} className="md:w-7 group-hover:rotate-12 transition-transform" />
+                <Sparkles
+                  size={24}
+                  className="md:w-7 group-hover:rotate-12 transition-transform"
+                />
                 <span>GENERATE ASSIGNMENT</span>
               </>
             )}

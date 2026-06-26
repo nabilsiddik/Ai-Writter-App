@@ -16,6 +16,7 @@ import {
 import { generateAssignment, generatePdf } from "@/services/ai/projectAnalyser";
 import { toast } from "sonner";
 import Link from "next/link";
+import { generateContent } from "@/services/generation";
 
 // --- Types ---
 type Section = {
@@ -34,9 +35,7 @@ type AssignmentMetadata = {
   date: string;
 };
 
-export default function HomePageContent({user}: {
-  user: any
-}) {
+export default function HomePageContent({ user }: { user: any }) {
   const [step, setStep] = useState<"hero" | "form" | "editing" | "result">(
     "hero",
   );
@@ -56,20 +55,18 @@ export default function HomePageContent({user}: {
     date: new Date().toLocaleDateString(),
   });
 
+  console.log(user, "user");
 
   const handleGenerateAIContent = async () => {
     setLoading(true);
     try {
-      const res = await generateAssignment({
-        ...formData,
-        selectedTopics: ["Introduction", "Analysis", "Conclusion"],
-      });
+      const res = await generateContent(formData);
       const data = res?.data;
 
       if (res?.success) {
-        toast.success("Generated");
+        toast.success("Your Assignment Content Generated.");
       } else {
-        toast.error("Failed");
+        toast.error("Assignment Content Generation Failed");
       }
 
       setAssignmentId(data?.id);
@@ -139,13 +136,16 @@ export default function HomePageContent({user}: {
                 click.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link target="_blank" href={user ? '/ai-content-writter/tools' : '/login'}>
-                <button
-                  onClick={() => setStep("form")}
-                  className="px-8 py-4 bg-indigo-600 cursor-pointer hover:bg-indigo-500 rounded-xl font-bold text-lg flex items-center gap-2 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-indigo-500/25"
+                <Link
+                  target="_blank"
+                  href={user ? "/ai-content-writter/tools" : "/login"}
                 >
-                  Get Started For Free <ChevronRight size={20} />
-                </button>
+                  <button
+                    onClick={() => setStep("form")}
+                    className="px-8 py-4 bg-indigo-600 cursor-pointer hover:bg-indigo-500 rounded-xl font-bold text-lg flex items-center gap-2 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-indigo-500/25"
+                  >
+                    Get Started For Free <ChevronRight size={20} />
+                  </button>
                 </Link>
                 <button className="px-8 py-4 bg-white/5 border border-white/10 rounded-xl font-bold text-lg hover:bg-white/10 transition-all">
                   View Templates
