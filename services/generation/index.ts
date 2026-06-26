@@ -114,3 +114,19 @@ export const openInGoogleDoc = async (id: string, payload: any) => {
     };
   }
 };
+
+export const exportMsDocx = async (id: string, payload: any) => {
+  try {
+    const res = await serverFetch.post(`/document/${id}/download-docx`, {
+      body: JSON.stringify(payload),
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+    const blob = await res.blob();
+    return blob || null;
+  } catch (error: any) {
+    console.error("Docx Export Error:", error);
+    return null;
+  }
+};

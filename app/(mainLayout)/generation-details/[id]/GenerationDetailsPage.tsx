@@ -16,11 +16,21 @@ import {
   Calendar,
   PenLine,
   File,
+  X,
+  ShieldCheck,
+  Cloud,
+  FileText,
 } from "lucide-react";
 import { toast } from "sonner";
-import { generatePDF, openInGoogleDoc } from "@/services/generation";
+import {
+  exportMsDocx,
+  generatePDF,
+  openInGoogleDoc,
+} from "@/services/generation";
 import { FaFilePdf, FaMicrosoft } from "react-icons/fa6";
 import PageHeader from "@/components/shared/PageHeader";
+import { FcGoogle } from "react-icons/fc";
+import { googleLogin } from "@/services/auth/userLogin";
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -30,6 +40,7 @@ const fadeIn = {
 export default function GenerationDetails({ genDetails }: { genDetails: any }) {
   const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
 
   // Initialize state from the passed genDetails prop
   const [assignment, setAssignment] = useState<any>(genDetails);
@@ -99,8 +110,11 @@ export default function GenerationDetails({ genDetails }: { genDetails: any }) {
         if (result?.data?.url) {
           router.push(result?.data?.url);
         }
-      } else if (result?.error?.response?.data?.error === "invalid_grant") {
-        toast.error("You need to login with google with required permissions.");
+      } else if (
+        result?.error?.response?.data?.error === "invalid_grant" ||
+        result?.statusCode === 401
+      ) {
+        setIsGoogleModalOpen(true);
       } else {
         toast.error(result?.message || "Exporting failed.");
       }
@@ -111,10 +125,135 @@ export default function GenerationDetails({ genDetails }: { genDetails: any }) {
     }
   };
 
-  const handleExportInMsWord = async () => {};
+  const handleExportInMsWord = async () => {
+    if (!assignment?.id) return toast.error("Document ID missing");
+    setIsGenerating(true);
+    const payload = {
+      sections: editableSections,
+    };
+
+    try {
+      const blob = await exportMsDocx(assignment?.id, payload);
+      if (blob) {
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+
+        const fileName = `${assignment?.topic || "Assignment"}.docx`;
+        link.setAttribute("download", fileName);
+
+        document.body.appendChild(link);
+        link.click();
+
+        if (link.parentNode) link.parentNode.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        toast.success("MS Word document downloaded successfully!");
+      } else {
+        toast.error("Could not generate Word file. Please try again.");
+      }
+    } catch (err) {
+      toast.error("Internal Server Error occurred.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const res = await googleLogin();
+      console.log(res);
+
+      if (res?.success && res?.data?.url) {
+        router.push(res?.data?.url);
+      } else {
+        toast.error(res?.message || "Something went wrong");
+      }
+    } catch (err) {
+      toast.error("Something Went Wrong");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#020202] text-white selection:bg-indigo-500/30 font-sans">
+      {/* google auth modal  */}
+      <AnimatePresence>
+        {isGoogleModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsGoogleModalOpen(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-md"
+            />
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-xl bg-[#0A0A0A] border border-white/10 rounded-[40px] p-10 md:p-14 shadow-3xl overflow-hidden"
+            >
+              <div className="absolute -top-20 -right-20 w-64 h-64 bg-indigo-600/20 blur-[80px] rounded-full" />
+
+              <button
+                onClick={() => setIsGoogleModalOpen(false)}
+                className="absolute top-8 right-8 p-2 text-gray-500 hover:text-white transition-colors"
+              >
+                <X size={28} />
+              </button>
+
+              <div className="relative z-10 text-center">
+                <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-white/10">
+                  <FcGoogle size={44} />
+                </div>
+
+                <h2 className="text-3xl md:text-4xl font-black mb-6 tracking-tight">
+                  Google Access Required
+                </h2>
+
+                <p className="text-gray-400 text-xl leading-relaxed mb-10">
+                  To open this assignment in{" "}
+                  <span className="text-white font-bold">Google Docs</span> or
+                  save it to your{" "}
+                  <span className="text-white font-bold">Drive</span>, we need
+                  your permission to manage documents.
+                </p>
+
+                <div className="space-y-4 mb-12">
+                  <div className="flex items-center gap-4 text-left p-4 bg-white/5 rounded-2xl border border-white/5">
+                    <ShieldCheck className="text-emerald-500" size={24} />
+                    <p className="text-lg font-medium text-gray-300 tracking-wide">
+                      Secure OAuth 2.0 Connection
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 text-left p-4 bg-white/5 rounded-2xl border border-white/5">
+                    <Cloud className="text-blue-500" size={24} />
+                    <p className="text-lg font-medium text-gray-300 tracking-wide">
+                      Direct Export to your Workspace
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleGoogleLogin}
+                  className="w-full py-6 bg-white text-black hover:bg-indigo-600 hover:text-white rounded-[24px] font-black text-xl transition-all flex items-center justify-center gap-4 cursor-pointer shadow-xl active:scale-95"
+                >
+                  <FcGoogle size={28} />
+                  Connect Google Account
+                </button>
+
+                <p className="mt-6 text-gray-600 text-base italic">
+                  You will be redirected to Google to authorize these
+                  permissions.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <PageHeader
         title="Here is your Generation Details"
         description={
@@ -167,7 +306,7 @@ export default function GenerationDetails({ genDetails }: { genDetails: any }) {
               {isGenerating ? "Opening..." : "Open In Google Docs"}
             </button>
 
-            <button
+            {/* <button
               onClick={handleExportInMsWord}
               disabled={isGenerating}
               className="flex-1 md:flex-none flex items-center justify-center gap-4 px-10 py-5 bg-white text-black hover:bg-indigo-600 hover:text-white rounded-[24px] font-black text-xl transition-all shadow-2xl disabled:opacity-50 cursor-pointer"
@@ -178,6 +317,23 @@ export default function GenerationDetails({ genDetails }: { genDetails: any }) {
                 <FaMicrosoft size={24} />
               )}
               {isGenerating ? "Exporting Docx..." : "Export In MS Docx"}
+            </button> */}
+            <button
+              onClick={handleExportInMsWord}
+              disabled={isGenerating}
+              className="flex-1 md:flex-none flex items-center justify-center gap-4 px-10 py-5 bg-white/5 border border-white/10 text-white hover:bg-blue-600 hover:border-blue-500 rounded-[24px] font-black text-xl transition-all shadow-2xl disabled:opacity-50 cursor-pointer group"
+            >
+              {isGenerating ? (
+                <Loader2 className="animate-spin" size={24} />
+              ) : (
+                <div className="p-2 bg-blue-500/20 rounded-lg group-hover:bg-white/20 transition-colors">
+                  <FileText
+                    size={24}
+                    className="text-blue-400 group-hover:text-white"
+                  />
+                </div>
+              )}
+              {isGenerating ? "Processing..." : "Download Word"}
             </button>
           </div>
         </div>
