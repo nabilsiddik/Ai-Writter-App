@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
+import { FaFilePdf } from "react-icons/fa6";
 
 // --- Animation Variants ---
 const containerVariants: Variants = {
@@ -52,7 +53,7 @@ export default function MyGenerations({ generations }: { generations: any }) {
         />
       </div>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-24">
+      <main className="relative z-10 max-w-7xl mx-auto px-6 pt-16 pb-24">
         {/* --- Header Section --- */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
           <motion.div
@@ -63,7 +64,7 @@ export default function MyGenerations({ generations }: { generations: any }) {
               <div className="p-2 bg-indigo-500 rounded-lg shadow-lg shadow-indigo-500/20">
                 <FileText size={20} className="text-white" />
               </div>
-              <span className="text-indigo-400 font-bold tracking-widest text-xs uppercase">
+              <span className="text-indigo-400 font-bold tracking-widest   uppercase">
                 Dashboard
               </span>
             </div>
@@ -109,7 +110,7 @@ export default function MyGenerations({ generations }: { generations: any }) {
                 <Loader2 className="animate-spin text-indigo-500" size={48} />
                 <div className="absolute inset-0 blur-xl bg-indigo-500/20 animate-pulse" />
               </div>
-              <p className="mt-6 text-gray-500 font-medium tracking-widest uppercase text-xs">
+              <p className="mt-6 text-gray-500 font-medium tracking-widest uppercase  ">
                 Syncing your data...
               </p>
             </motion.div>
@@ -189,13 +190,13 @@ function GenerationCard({ gen }: { gen: any }) {
         <div className="space-y-3 pt-2">
           <div className="flex items-center gap-3 text-gray-400">
             <University size={16} className="text-indigo-500/70" />
-            <span className="text-sm font-medium truncate">
+            <span className="  font-medium truncate">
               {gen?.universityName || "General Template"}
             </span>
           </div>
           <div className="flex items-center gap-3 text-gray-400">
             <User size={16} className="text-purple-500/70" />
-            <span className="text-sm font-medium">
+            <span className="  font-medium">
               To: {gen?.submittedTo || "N/A"}
             </span>
           </div>
@@ -210,7 +211,7 @@ function GenerationCard({ gen }: { gen: any }) {
           <span className="text-[10px] text-gray-600 uppercase font-black tracking-widest mb-1">
             Sections
           </span>
-          <span className="text-sm font-bold text-white">
+          <span className="  font-bold text-white">
             {gen?.sections?.length || 0} AI Blocks
           </span>
         </div>
@@ -218,7 +219,7 @@ function GenerationCard({ gen }: { gen: any }) {
           <span className="text-[10px] text-gray-600 uppercase font-black tracking-widest mb-1">
             Created
           </span>
-          <span className="text-sm font-bold text-white">
+          <span className="  font-bold text-white">
             {gen?.createdAt ? format(new Date(gen.createdAt), "dd MMM") : "N/A"}
           </span>
         </div>
@@ -227,20 +228,21 @@ function GenerationCard({ gen }: { gen: any }) {
       {/* Action Buttons */}
       <div className="grid grid-cols-2 gap-3 relative z-10">
         <a
-          href={gen?.pdfUrl || "#"}
-          target="_blank"
-          className={`flex items-center justify-center gap-2 py-3.5 rounded-2xl text-xs font-black transition-all shadow-lg ${
+          href={gen?.pdfUrl}
+          target={gen?.pdfUrl && "_blank"}
+          className={`flex items-center justify-center gap-2 py-3.5 rounded-2xl text-md font-black transition-all shadow-lg ${
             gen?.pdfUrl
               ? "bg-white text-black hover:bg-indigo-600 hover:text-white"
               : "bg-white/5 text-gray-700 cursor-not-allowed"
           }`}
         >
-          <Download size={14} /> Download
+          <FaFilePdf className="text-read-500" size={24} /> View PDF
         </a>
+
         <Link target="_blank" href={`/generation-details/${gen?.id}`}>
-          <button className="cursor-pointer flex items-center justify-center gap-2 py-3.5 bg-white/[0.05] border border-white/10 hover:bg-white/10 text-white rounded-2xl text-xs font-black transition-all">
-          <ExternalLink size={14} /> Details
-        </button>
+          <button className="cursor-pointer flex items-center justify-center gap-2 py-3.5 px-10 bg-white/[0.05] border border-white/10 hover:bg-white/10 text-white rounded-2xl   font-black transition-all">
+            <ExternalLink size={24} /> Details
+          </button>
         </Link>
       </div>
     </motion.div>

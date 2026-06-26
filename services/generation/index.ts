@@ -3,7 +3,7 @@ import { serverFetch } from "@/lib/serverFetch";
 
 export const getMyGenerations = async () => {
   try {
-    const res = await serverFetch.get(`/assignment/my-generations`);
+    const res = await serverFetch.get(`/document/my-generations`);
     const result = await res.json();
     return result?.data || [];
   } catch (error: any) {

@@ -20,6 +20,7 @@ import {
   ShieldCheck,
   Cloud,
   FileText,
+  ExpandIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -29,7 +30,7 @@ import {
 } from "@/services/generation";
 import { FaFilePdf, FaMicrosoft } from "react-icons/fa6";
 import PageHeader from "@/components/shared/PageHeader";
-import { FcGoogle } from "react-icons/fc";
+import { FcExport, FcGoogle } from "react-icons/fc";
 import { googleLogin } from "@/services/auth/userLogin";
 
 const fadeIn = {
@@ -266,17 +267,17 @@ export default function GenerationDetails({ genDetails }: { genDetails: any }) {
         <div className="absolute bottom-[-5%] left-[-5%] w-[40%] h-[40%] bg-purple-600/10 blur-[120px] rounded-full animate-pulse" />
       </div>
 
-      <main className="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-40">
+      <main className="relative z-10 max-w-7xl mx-auto px-6 pt-14 pb-40">
         {/* Navigation Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16">
+        <div className="flex flex-col lg:flex-row justify-between items-center md:items-center gap-8 mb-16">
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push("/my-generations")}
             className="flex items-center gap-4 text-gray-400 hover:text-white transition-all group text-xl font-bold cursor-pointer"
           >
             <div className="p-3 rounded-2xl bg-white/5 group-hover:bg-white/10 border border-white/5 group-hover:border-white/20 transition-all">
               <ChevronLeft size={24} />
             </div>
-            Back to Library
+            My Library
           </button>
 
           <div className="flex flex-wrap items-center flex-col lg:flex-row gap-6 w-full md:w-auto">
@@ -306,18 +307,6 @@ export default function GenerationDetails({ genDetails }: { genDetails: any }) {
               {isGenerating ? "Opening..." : "Open In Google Docs"}
             </button>
 
-            {/* <button
-              onClick={handleExportInMsWord}
-              disabled={isGenerating}
-              className="flex-1 md:flex-none flex items-center justify-center gap-4 px-10 py-5 bg-white text-black hover:bg-indigo-600 hover:text-white rounded-[24px] font-black text-xl transition-all shadow-2xl disabled:opacity-50 cursor-pointer"
-            >
-              {isGenerating ? (
-                <Loader2 className="animate-spin" size={24} />
-              ) : (
-                <FaMicrosoft size={24} />
-              )}
-              {isGenerating ? "Exporting Docx..." : "Export In MS Docx"}
-            </button> */}
             <button
               onClick={handleExportInMsWord}
               disabled={isGenerating}
@@ -338,21 +327,6 @@ export default function GenerationDetails({ genDetails }: { genDetails: any }) {
           </div>
         </div>
 
-        {/* <div>
-          <button
-            onClick={handleFinalizeAndDownload}
-            disabled={isGenerating}
-            className="flex-1 md:flex-none flex items-center justify-center gap-4 px-10 py-5 bg-white text-black hover:bg-indigo-600 hover:text-white rounded-[24px] font-black text-xl transition-all shadow-2xl disabled:opacity-50 cursor-pointer"
-          >
-            {isGenerating ? (
-              <Loader2 className="animate-spin" size={24} />
-            ) : (
-              <Download size={24} />
-            )}
-            {isGenerating ? "Downloading PDF..." : "Download PDF"}
-          </button>
-        </div> */}
-
         {/* Premium Metadata Header */}
         <motion.section
           variants={fadeIn}
@@ -369,7 +343,7 @@ export default function GenerationDetails({ genDetails }: { genDetails: any }) {
                 </span>
               </div>
 
-              <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[1.1] bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-500">
+              <h1 className="text-5xl md:text-6xl font-black tracking-tighter leading-[1.1] bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-500">
                 {assignment?.topic || "Loading Topic..."}
               </h1>
 
@@ -474,27 +448,15 @@ export default function GenerationDetails({ genDetails }: { genDetails: any }) {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="mt-32 text-center"
+          className="mt-18 text-center"
         >
-          <div className="max-w-3xl mx-auto p-12 bg-gradient-to-br from-indigo-900/20 to-transparent border border-white/10 rounded-[50px] backdrop-blur-xl">
+          <div className="p-12 bg-gradient-to-br from-indigo-900/20 to-transparent border border-white/10 rounded-[50px] backdrop-blur-xl">
             <h2 className="text-4xl font-bold mb-6">Ready to finalize?</h2>
             <p className="text-gray-500 text-xl mb-12 leading-relaxed">
               Once you are happy with the edits, click the button below to
               generate a professionally formatted PDF including your
               university's specific cover page.
             </p>
-            {/* <button
-              onClick={handleFinalizeAndDownload}
-              disabled={isGenerating}
-              className="inline-flex items-center gap-6 px-16 py-8 bg-indigo-600 hover:bg-indigo-500 text-white rounded-[35px] font-black text-3xl transition-all shadow-[0_20px_50px_rgba(79,70,229,0.3)] disabled:opacity-50 cursor-pointer active:scale-95"
-            >
-              {isGenerating ? (
-                <Loader2 className="animate-spin" size={32} />
-              ) : (
-                <CheckCircle2 size={32} />
-              )}
-              {isGenerating ? "GENERATING..." : "GENERATE FINAL PDF"}
-            </button> */}
 
             <div className="flex flex-wrap items-center flex-col lg:flex-row gap-6 w-full md:w-auto">
               <button
@@ -526,14 +488,19 @@ export default function GenerationDetails({ genDetails }: { genDetails: any }) {
               <button
                 onClick={handleExportInMsWord}
                 disabled={isGenerating}
-                className="flex-1 md:flex-none flex items-center justify-center gap-4 px-10 py-5 bg-white text-black hover:bg-indigo-600 hover:text-white rounded-[24px] font-black text-xl transition-all shadow-2xl disabled:opacity-50 cursor-pointer"
+                className="flex-1 md:flex-none flex items-center justify-center gap-4 px-10 py-5 bg-white/5 border border-white/10 text-white hover:bg-blue-600 hover:border-blue-500 rounded-[24px] font-black text-xl transition-all shadow-2xl disabled:opacity-50 cursor-pointer group"
               >
                 {isGenerating ? (
                   <Loader2 className="animate-spin" size={24} />
                 ) : (
-                  <FaMicrosoft size={24} />
+                  <div className="p-2 bg-blue-500/20 rounded-lg group-hover:bg-white/20 transition-colors">
+                    <FileText
+                      size={24}
+                      className="text-blue-400 group-hover:text-white"
+                    />
+                  </div>
                 )}
-                {isGenerating ? "Exporting Docx..." : "Export In MS Docx"}
+                {isGenerating ? "Processing..." : "Download Word"}
               </button>
             </div>
           </div>
