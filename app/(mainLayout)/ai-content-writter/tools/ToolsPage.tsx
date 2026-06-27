@@ -60,10 +60,10 @@ const tools = [
     label: "Marketing"
   },
   {
-    title: "eCommerce Content",
-    description: "Persuasive product descriptions and sales copy designed to maximize conversion rates.",
+    title: "Woocommerce Product Writter",
+    description: "Persuasive product descriptions and sales copy designed to maximize conversion rates in.",
     icon: <ShoppingBag className="text-purple-500" />,
-    slug: "ecommerce-product-writter",
+    slug: "woocommerce-product-writter",
     color: "from-purple-500/10 to-transparent",
     label: "Business"
   },

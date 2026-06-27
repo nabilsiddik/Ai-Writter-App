@@ -56,6 +56,28 @@ export const generateContent = async (payload: any) => {
   }
 };
 
+
+export const publishToWoocommerce = async (id: string, payload: any) => {
+  try {
+    const res = await serverFetch.post(`/document/${id}/publish-woo`, {
+      body: JSON.stringify(payload),
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+    const result = await res.json();
+    return result || null;
+  } catch (error: any) {
+    return {
+      success: false,
+      message:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Something went wrong while publising to woocommerce.",
+    };
+  }
+};
+
 export const generationDetails = async (id: string) => {
   try {
     const res = await serverFetch.get(`/assignment/${id}`);
@@ -128,5 +150,38 @@ export const exportMsDocx = async (id: string, payload: any) => {
   } catch (error: any) {
     console.error("Docx Export Error:", error);
     return null;
+  }
+};
+
+export const connectWooCommerceStore = async (payload: any) => {
+  try {
+    const res = await serverFetch.post(`/document/connect-woocommerce`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+    return await res.json();
+  } catch (error) {
+    return { success: false, message: "Network error" };
+  }
+};
+
+// Get my woocommerce store
+export const getMyWooStore = async () => {
+  try {
+    const res = await serverFetch.get(
+      `/document/my-woo-store`,
+    );
+    const result = await res.json();
+    return result || null;
+  } catch (error: any) {
+    return {
+      success: false,
+      message:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Something went wrong while fetching woocommerce store.",
+    };
   }
 };
