@@ -1,9 +1,9 @@
-import Login from './LoginContent'
+import VerifyOTPPage from './OtpVerificationPage'
 
 const page = () => {
   return (
     <div>
-      <Login/>
+      <VerifyOTPPage/>
     </div>
   )
 }

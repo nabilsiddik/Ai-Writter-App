@@ -28,6 +28,7 @@
     "country-list": "^2.4.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.38.0",
+    "input-otp": "^1.4.2",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.555.0",
     "lucide-vue-next": "^0.562.0",

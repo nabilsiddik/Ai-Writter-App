@@ -83,16 +83,18 @@ export default function DashboardLayout({ children, isAdmin = false }: { childre
         <div className="flex flex-col h-full p-6">
           
           {/* Logo */}
-          <div className="flex items-center gap-4 mb-12 px-2">
+          <Link href="/">
+            <div className="flex items-center gap-4 mb-12 px-2">
             <div className="p-3 bg-primary rounded-2xl shadow-lg shadow-primary/20">
               <Sparkles className="text-white" size={24} />
             </div>
             {isSidebarOpen && (
               <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-2xl font-black tracking-tighter">
-                AICANDY<span className="text-primary">.ai</span>
+                WRITTER<span className="text-primary">.ai</span>
               </motion.span>
             )}
           </div>
+          </Link>
 
           {/* Menu Items */}
           <nav className="flex-1 space-y-3 overflow-y-auto no-scrollbar">
