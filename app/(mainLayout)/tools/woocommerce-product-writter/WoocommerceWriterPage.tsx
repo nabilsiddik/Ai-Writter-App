@@ -3,8 +3,7 @@ import PageHeader from "@/components/shared/PageHeader"
 
 const WoocommerceWriterPage = () => {
   return (
-    <div>
-        <PageHeader title="Woocommerce Product Writter" description={'Automate your woocommerce product writting. Give some details and Ai will write you SEO friendly product details and upload directly to your woocommerce store.'}/>
+    <div className="mt-20">
         <WooCommerceProductForm/>
     </div>
   )

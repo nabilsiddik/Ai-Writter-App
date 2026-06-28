@@ -3,7 +3,7 @@ import { serverFetch } from "@/lib/serverFetch";
 
 export const generateAssignment = async (payload: any) => {
   try {
-    const res = await serverFetch.post(`/assignment/generate-assignment`, {
+    const res = await serverFetch.post(`/document/generate-content`, {
       body: JSON.stringify(payload),
       headers: {
         "content-type": "application/json",
