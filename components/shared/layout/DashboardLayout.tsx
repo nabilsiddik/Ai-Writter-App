@@ -8,7 +8,9 @@ import {
   Settings, CreditCard, Users, Database, 
   LogOut, User, Bell, Sparkles, ShoppingBag, 
   DollarSign,
-  DollarSignIcon
+  DollarSignIcon,
+  ArrowRightLeft,
+  UserCheck
 } from "lucide-react";
 import Link from "next/link";
 
@@ -38,8 +40,10 @@ const ADMIN_MENU: MenuItem[] = [
   { label: "Overview", icon: <Database size={22} />, href: "/admin/dashboard/overview" },
   { label: "Financial Overview", icon: <DollarSignIcon size={22} />, href: "/admin/dashboard/financial-overview" },
   { label: "Manage Users", icon: <Users size={22} />, href: "/admin/dashboard/user-management" },
-  { label: "All Generations", icon: <FileText size={22} />, href: "/admin/documents" },
-  { label: "Store Logic", icon: <ShoppingBag size={22} />, href: "/admin/stores" },
+  { label: "Manage Documents", icon: <FileText size={22} />, href: "/admin/dashboard/manage-document" },
+  { label: "Subscriptions", icon: <UserCheck size={22} />, href: "/admin/dashboard/subscriptions" },
+  { label: "Transactions", icon: <ArrowRightLeft size={22} />, href: "/admin/dashboard/transactions" },
+
 ];
 
 export default function DashboardLayout({ children, isAdmin = false }: { children: React.ReactNode, isAdmin?: boolean }) {
