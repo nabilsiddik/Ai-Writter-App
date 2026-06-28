@@ -1,7 +1,5 @@
 import Image from "next/image";
-import Logo from "./logo";
 import FooterSocialIcons from "./shared/FooterSocialIcons";
-import SocialIcons from "./shared/FooterSocialIcons";
 
 interface MenuItem {
   title: string;
@@ -28,13 +26,6 @@ interface Footer2Props {
 }
 
 const Footer = ({
-  logo = {
-    src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/block-1.svg",
-    alt: "blocks for shadcn/ui",
-    title: "Shadcnblocks.com",
-    url: "https://www.shadcnblocks.com",
-  },
-  tagline = "Components made easy.",
   menuItems = [
     // {
     //   title: "Product",

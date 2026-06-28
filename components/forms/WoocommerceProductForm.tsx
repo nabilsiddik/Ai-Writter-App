@@ -50,13 +50,13 @@ const WooCommerceProductForm = () => {
     try {
       const res = await generateContent(payload)
       console.log(res, 'my rs po');
-      const data = await res.json();
+      const data = res?.data
 
-      if (data?.success) {
+      if (res?.success) {
         toast.success("Product content generated", {id: toastId});
-        router.push(`/generation-details/${data?.data?.id}`);
+        router.push(`/generation-details/${data?.id}`);
       } else {
-        toast.error(data?.message || "Generation failed.", {id: toastId});
+        toast.error(res?.message || "Generation failed.", {id: toastId});
       }
     } catch (error) {
       toast.error("Network error. Please try again.", {id: toastId});

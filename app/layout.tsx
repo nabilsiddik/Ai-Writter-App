@@ -1,18 +1,12 @@
 import type { Metadata } from "next";
-import { DM_Sans, Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { Open_Sans } from "next/font/google";
 
-const inter = Inter({
+export const openSans = Open_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
   display: "swap",
-});
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  variable: "--font-dm-sans",
-  display: "swap",
+  variable: "--font-open-sans", // optional
 });
 
 export const metadata: Metadata = {
@@ -41,7 +35,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${inter.variable} ${dmSans.variable} antialiased`}
+        className={`${openSans.className} antialiased`}
       >
         {children}
         <Toaster richColors position="top-right" />

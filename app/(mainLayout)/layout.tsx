@@ -25,7 +25,7 @@ export default async function RootLayout({
         {/* <NotificationSystem /> */}
         {/* <Navbar user = {user} cart = {cart}/> */}
         <Header user={user}/>
-        <main className="py-20 bg-[#050505] ">{children}</main>
+        <main>{children}</main>
         <Footer />
       </body>
     </html>
