@@ -225,7 +225,7 @@ export default function GenerationDetails({ genDetails, wooStore }: { genDetails
       <header className="bg-slate-50 border-b border-slate-200 py-12 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="text-center md:text-left">
-            <h1 className="text-4xl font-black tracking-tight mb-2">Review & Export</h1>
+            <h1 className="text-3xl lg:text-4xl font-black tracking-tight mb-2">Review & Export</h1>
             <p className="text-slate-500 text-xl font-medium">Refine your document and choose a professional format.</p>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-4">

@@ -6,7 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Menu, X, ChevronDown, LayoutDashboard, FileText, 
   Settings, CreditCard, Users, Database, 
-  LogOut, User, Bell, Sparkles, ShoppingBag 
+  LogOut, User, Bell, Sparkles, ShoppingBag, 
+  DollarSign,
+  DollarSignIcon
 } from "lucide-react";
 import Link from "next/link";
 
@@ -33,8 +35,9 @@ const USER_MENU: MenuItem[] = [
 ];
 
 const ADMIN_MENU: MenuItem[] = [
-  { label: "Admin Stats", icon: <Database size={22} />, href: "/admin" },
-  { label: "Manage Users", icon: <Users size={22} />, href: "/admin/users" },
+  { label: "Overview", icon: <Database size={22} />, href: "/admin/dashboard/overview" },
+  { label: "Financial Overview", icon: <DollarSignIcon size={22} />, href: "/admin/dashboard/financial-overview" },
+  { label: "Manage Users", icon: <Users size={22} />, href: "/admin/dashboard/user-management" },
   { label: "All Generations", icon: <FileText size={22} />, href: "/admin/documents" },
   { label: "Store Logic", icon: <ShoppingBag size={22} />, href: "/admin/stores" },
 ];
@@ -44,7 +47,7 @@ export default function DashboardLayout({ children, isAdmin = false }: { childre
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
   const pathname = usePathname();
-  const menuItems = isAdmin ? ADMIN_MENU : USER_MENU;
+  const menuItems = ADMIN_MENU;
 
   // Close mobile sidebar on route change
   useEffect(() => setIsMobileOpen(false), [pathname]);
@@ -69,7 +72,7 @@ export default function DashboardLayout({ children, isAdmin = false }: { childre
 
       {/* --- SIDEBAR --- */}
       <aside className={`
-        fixed lg:relative z-[70] h-screen transition-all duration-500 border-r border-white/5 bg-dark-accent
+        fixed lg:relative z-[70] bg-black h-screen transition-all duration-500 border-r border-white/5 bg-dark-accent
         ${isSidebarOpen ? "w-80" : "w-24"}
         ${isMobileOpen ? "left-0" : "-left-full lg:left-0"}
       `}>
@@ -142,7 +145,7 @@ export default function DashboardLayout({ children, isAdmin = false }: { childre
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         
         {/* Header */}
-        <header className="h-24 border-b border-white/5 flex items-center justify-between px-8 bg-dark/50 backdrop-blur-xl z-50">
+        <header className="bg-black h-24 border-b border-white/5 flex items-center justify-between px-8 bg-dark/50 backdrop-blur-xl z-50">
           <div className="flex items-center gap-6">
             <button onClick={() => setIsMobileOpen(true)} className="lg:hidden p-2 text-gray-400 cursor-pointer">
               <Menu size={28} />
@@ -176,7 +179,7 @@ export default function DashboardLayout({ children, isAdmin = false }: { childre
         </header>
 
         {/* Dynamic Child Content */}
-        <main className="flex-1 overflow-y-auto p-6 md:p-10 no-scrollbar bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed">
+        <main className="flex-1 bg-white overflow-y-auto p-6 md:p-10 no-scrollbar">
           {children}
         </main>
       </div>

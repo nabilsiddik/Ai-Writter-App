@@ -1,28 +1,22 @@
 "use server";
 import { serverFetch } from "@/lib/serverFetch";
 
-export const getOverviewData = async (type: string = 'monthly') => {
+export const getOverviewData = async () => {
   try {
-    const res = await serverFetch.get(`/admin/overview?chartType=${type}`);
-    return await res.json();
+    const res = await serverFetch.get(`/admin/dashboard-stats`);
+    const result = await res.json();
+    return result?.data || null
   } catch (error: any) {
     return { success: false, message: error.message };
   }
 };
 
-export const downloadReportAction = async () => {
+
+export const getFinancialOverview = async () => {
   try {
-    const res = await serverFetch.get("/admin/export/overview-report");
-    const result = await res.json()
-
-    if (!res.ok) throw new Error("Failed to fetch PDF");
-
-    const arrayBuffer = await res.arrayBuffer();
-    
-    return {
-      success: true,
-      data: Buffer.from(arrayBuffer).toString('base64')
-    };
+    const res = await serverFetch.get(`/admin/financial-overview`);
+    const result = await res.json();
+    return result?.data || null
   } catch (error: any) {
     return { success: false, message: error.message };
   }

@@ -1,8 +1,13 @@
 import React from 'react'
+import OverviewPage from './OverviewPage'
+import { getOverviewData } from '@/services/admin/overviewManagement'
 
-const page = () => {
+const page = async() => {
+  const overviewData = await getOverviewData()
   return (
-    <div>page</div>
+    <div>
+      <OverviewPage overviewData={overviewData}/>
+    </div>
   )
 }
 
