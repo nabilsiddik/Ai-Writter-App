@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import {
@@ -46,14 +46,20 @@ const slideUp: Variants = {
 };
 
 export default function GenerationDetails({ genDetails, wooStore }: { genDetails: any, wooStore: any }) {
+  console.log(wooStore, 'wooo');
   const router = useRouter();
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [pdfGenerating, setPdfGenerating] = useState(false);
+  const [googleDocGenerating, setGoogleDocGenerating] = useState(false);
+  const [msDocxGenerating, setMsDocxGenerating] = useState(false);
+  const [uploadingWoo, setUploadingWoo] = useState(false);
   const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [isWooModalOpen, setIsWooModalOpen] = useState(false);
 
   const [document, setDocument] = useState<any>(genDetails);
   const [editableSections, setEditableSections] = useState<any[]>(genDetails?.sections || []);
+
+  const [isPending, startTransition] = useTransition()
   
   const [wooData, setWooData] = useState({
     storeUrl: "",
@@ -85,7 +91,7 @@ export default function GenerationDetails({ genDetails, wooStore }: { genDetails
 
   const handleExportInPDF = async () => {
     if (!document?.id) return toast.error("Document ID missing");
-    setIsGenerating(true);
+    setPdfGenerating(true);
     try {
       const result = await generatePDF(document?.id, { sections: editableSections });
       if (result?.success && result?.data?.url) {
@@ -94,30 +100,34 @@ export default function GenerationDetails({ genDetails, wooStore }: { genDetails
         toast.error(result?.message || "Generation failed.");
       }
     } catch (err) { toast.error("PDF Generation Error"); }
-    finally { setIsGenerating(false); }
+    finally { setPdfGenerating(false); }
   };
 
   const handleOpenInGoogleDoc = async () => {
     if (!document?.id) return toast.error("Document ID missing");
-    setIsGenerating(true);
+    setGoogleDocGenerating(true);
     try {
       const result = await openInGoogleDoc(document?.id, { sections: editableSections });
+
+      console.log(result, 'google');
+
       if (result?.success && result?.data?.url) {
         window.open(result.data.url, "_blank");
-      } else if (result?.statusCode === 401) {
+      } else if (result?.error?.statusCode === 401) {
         setIsGoogleModalOpen(true);
       } else {
         toast.error(result?.message || "Exporting failed.");
       }
     } catch (err) { toast.error("Google Docs Error"); }
-    finally { setIsGenerating(false); }
+    finally { setGoogleDocGenerating(false); }
   };
 
   const handleExportInMsWord = async () => {
     if (!document?.id) return toast.error("Document ID missing");
-    setIsGenerating(true);
+    setMsDocxGenerating(true);
     try {
       const blob = await exportMsDocx(document?.id, { sections: editableSections });
+      console.log(blob, 'blobbbb');
       if (blob) {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -130,25 +140,25 @@ export default function GenerationDetails({ genDetails, wooStore }: { genDetails
         toast.success("Word document downloaded!");
       }
     } catch (err) { toast.error("Word Export Error"); }
-    finally { setIsGenerating(false); }
+    finally { setMsDocxGenerating(false); }
   };
 
   const handleUploadToWoocommerce = async () => {
     if (!document?.id) return toast.error("Document ID missing");
     if (!formData.regularPrice || !formData.stock) return toast.error("Please fill in Price and Stock");
-    setIsGenerating(true);
+    setUploadingWoo(true);
     try {
       const result = await publishToWoocommerce(document?.id, {
         sections: editableSections,
         ...formData
       });
       if (result?.success) {
-        toast.success("Synced to Store Drafts!");
+        toast.success("Uploaded to woocommerce draft!");
       } else {
-        toast.error(result?.message || "Sync failed.");
+        toast.error(result?.message || "Upload failed.");
       }
     } catch (err) { toast.error("WooCommerce API Error"); }
-    finally { setIsGenerating(false); }
+    finally { setUploadingWoo(false); }
   };
 
   const handleGoogleLogin = async () => {
@@ -166,6 +176,9 @@ export default function GenerationDetails({ genDetails, wooStore }: { genDetails
     try {
       const result = await connectWooCommerceStore(wooData);
       if (result?.success) {
+        startTransition(() => {
+          router.refresh()
+        })
         toast.success("WooCommerce Connected!");
         setIsWooModalOpen(false);
       } else {
@@ -229,13 +242,13 @@ export default function GenerationDetails({ genDetails, wooStore }: { genDetails
             <p className="text-slate-500 text-xl font-medium">Refine your document and choose a professional format.</p>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <button onClick={handleExportInPDF} disabled={isGenerating} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-200 rounded-xl font-bold hover:shadow-md transition-all cursor-pointer">
-              {isGenerating ? <Loader2 className="animate-spin" size={20} /> : <FaFilePdf className="text-red-500" size={20} />} Export PDF
+            <button onClick={handleExportInPDF} disabled={pdfGenerating} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-200 rounded-xl font-bold hover:shadow-md transition-all cursor-pointer">
+              {pdfGenerating ? <Loader2 className="animate-spin" size={20} /> : <FaFilePdf className="text-red-500" size={20} />} Export PDF
             </button>
-            <button onClick={handleOpenInGoogleDoc} disabled={isGenerating} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-200 rounded-xl font-bold hover:shadow-md transition-all cursor-pointer">
+            <button onClick={handleOpenInGoogleDoc} disabled={googleDocGenerating} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-200 rounded-xl font-bold hover:shadow-md transition-all cursor-pointer">
               <File size={20} className="text-blue-500" /> Open Google Docs
             </button>
-            <button onClick={handleExportInMsWord} disabled={isGenerating} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-200 rounded-xl font-bold hover:shadow-md transition-all cursor-pointer">
+            <button onClick={handleExportInMsWord} disabled={msDocxGenerating} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-200 rounded-xl font-bold hover:shadow-md transition-all cursor-pointer">
               <FileText size={20} className="text-indigo-600" />Export MS Word
             </button>
           </div>
@@ -293,9 +306,9 @@ export default function GenerationDetails({ genDetails, wooStore }: { genDetails
               <div><label className={labelStyles}>Stock Level</label><input type="number" className={inputStyles} placeholder="0" value={formData.stock} onChange={(e) => setFormData({...formData, stock: e.target.value})} /></div>
               {/* <div><label className={labelStyles}>Category ID</label><input type="text" className={inputStyles} placeholder="Sync ID" value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} /></div> */}
             </div>
-            {wooStore?.success ? (
-              <button onClick={handleUploadToWoocommerce} disabled={isGenerating} className="w-full py-6 bg-emerald-600 text-white rounded-2xl font-bold text-xl hover:bg-emerald-700 transition-all flex items-center justify-center gap-3 cursor-pointer shadow-lg shadow-emerald-600/20">
-                {isGenerating ? <Loader2 className="animate-spin" /> : <ShoppingBag size={24} />} Upload to WooCommerce
+            {wooStore ? (
+              <button onClick={handleUploadToWoocommerce} disabled={uploadingWoo} className="w-full py-6 bg-emerald-600 text-white rounded-2xl font-bold text-xl hover:bg-emerald-700 transition-all flex items-center justify-center gap-3 cursor-pointer shadow-lg shadow-emerald-600/20">
+                {uploadingWoo ? <Loader2 className="animate-spin" /> : <ShoppingBag size={24} />} Upload to WooCommerce
               </button>
             ) : (
               <button onClick={() => setIsWooModalOpen(true)} className="w-full py-6 bg-slate-900 text-white rounded-2xl font-bold text-xl hover:bg-black transition-all flex items-center justify-center gap-3 cursor-pointer">
@@ -309,13 +322,13 @@ export default function GenerationDetails({ genDetails, wooStore }: { genDetails
           <h2 className="text-3xl font-black mb-4">Review & Export</h2>
           <p className="text-slate-500 text-xl mb-10 font-medium">Refine your document and choose a professional format.</p>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <button onClick={handleExportInPDF} disabled={isGenerating} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-200 rounded-xl font-bold hover:shadow-md transition-all cursor-pointer">
-              {isGenerating ? <Loader2 className="animate-spin" size={20} /> : <FaFilePdf className="text-red-500" size={20} />} Export PDF
+            <button onClick={handleExportInPDF} disabled={pdfGenerating} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-200 rounded-xl font-bold hover:shadow-md transition-all cursor-pointer">
+              {pdfGenerating ? <Loader2 className="animate-spin" size={20} /> : <FaFilePdf className="text-red-500" size={20} />} Export PDF
             </button>
-            <button onClick={handleOpenInGoogleDoc} disabled={isGenerating} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-200 rounded-xl font-bold hover:shadow-md transition-all cursor-pointer">
+            <button onClick={handleOpenInGoogleDoc} disabled={googleDocGenerating} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-200 rounded-xl font-bold hover:shadow-md transition-all cursor-pointer">
               <File size={20} className="text-blue-500" /> Open Google Docs
             </button>
-            <button onClick={handleExportInMsWord} disabled={isGenerating} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-200 rounded-xl font-bold hover:shadow-md transition-all cursor-pointer">
+            <button onClick={handleExportInMsWord} disabled={msDocxGenerating} className="flex items-center gap-3 px-6 py-4 bg-white border border-slate-200 rounded-xl font-bold hover:shadow-md transition-all cursor-pointer">
               <FileText size={20} className="text-indigo-600" />Export MS Word
             </button>
           </div>

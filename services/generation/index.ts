@@ -145,6 +145,7 @@ export const exportMsDocx = async (id: string, payload: any) => {
         "content-type": "application/json",
       },
     });
+    console.log(res, 'docx res');
     const blob = await res.blob();
     return blob || null;
   } catch (error: any) {

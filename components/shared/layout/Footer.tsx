@@ -9,12 +9,12 @@ export function Footer() {
         <div className="col-span-2">
            {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="p-2 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-lg group-hover:rotate-12 transition-transform shadow-lg shadow-indigo-500/20">
+          <div className="p-2 bg-primary rounded-lg group-hover:rotate-12 transition-transform shadow-lg shadow-indigo-500/20">
             <Sparkles size={20} className="text-white" />
           </div>
           <span className="text-xl font-bold tracking-tighter flex items-center gap-1">
-            <span className="text-indigo-500">Ai</span> ContentWritter
-            <span className="text-indigo-500"></span>
+            <span className="text-primary">Ai</span> ContentWritter
+            <span className="text-primary"></span>
           </span>
         </Link>
           <p className="font-medium mt-4 max-w-sm">

@@ -17,6 +17,7 @@ import {
   Pen,
   Crown,
   Gem,
+  LayoutGrid,
 } from "lucide-react";
 import Link from "next/link";
 import { userLogout } from "@/services/auth/userLogout";
@@ -53,12 +54,12 @@ export default function Navbar({ user }: { user: any }) {
       <div className="max-w-7xl mx-auto px-6 xl:px-0 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="p-2 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-lg group-hover:rotate-12 transition-transform shadow-lg shadow-indigo-500/20">
+          <div className="p-2 bg-primary rounded-lg group-hover:rotate-12 transition-transform shadow-lg shadow-indigo-500/20">
             <Sparkles size={20} className="text-white" />
           </div>
           <span className="text-xl font-bold tracking-tighter flex items-center gap-1">
-            <span className="text-indigo-500">Ai</span> ContentWritter
-            <span className="text-indigo-500"></span>
+            <span className="text-primary">Ai</span> ContentWritter
+            <span className="text-primary"></span>
           </span>
         </Link>
 
@@ -143,11 +144,11 @@ export default function Navbar({ user }: { user: any }) {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="absolute right-0 mt-3 w-56 bg-white border border-primary/10 rounded-2xl p-2 shadow-2xl cursor-pointer"
+                    className="absolute right-0 mt-3 w-80  bg-white border border-primary/10 rounded-2xl p-4 shadow-2xl cursor-pointer"
                   >
                     <div className="px-3 py-2 border-b border-white/5 mb-1">
-                      <p className="text-lg font-bold">
-                        {user?.fullName}
+                      <p className="text-2xl font-bold mb-3">
+                        Hi, <span className="text-primary">{user?.fullName}</span>
                       </p>
                       <p className="text-md font-bold">{user?.email}</p>
                       <p className=" text-gray-700">
@@ -171,9 +172,16 @@ export default function Navbar({ user }: { user: any }) {
                       </p>
                     </div>
 
-                    {/* <button className="w-full flex items-center gap-3 px-3 py-2 hover:bg-white/5 rounded-lg text-sm text-gray-300 transition-colors">
-                      <CreditCard size={16} /> Subscription
-                    </button> */}
+                    {user?.role === 'ADMIN' && 
+                      <div className="mx-5 border-t border-b py-3 font-medium text-lg">
+                        <ul>
+                          <Link href={user?.role === 'ADMIN' ? '/admin/dashboard/overview' : '/'}>
+                            <li className="flex items-center gap-3"><LayoutGrid/> Admin Dashboard</li>
+                          </Link>
+                        </ul>
+                      </div>
+                    }
+                    
                     <button
                       onClick={async () => {
                         const res = await userLogout();
@@ -184,9 +192,9 @@ export default function Navbar({ user }: { user: any }) {
                           toast.error("Logout Failed");
                         }
                       }}
-                      className="w-full cursor-pointer flex items-center gap-3 px-3 py-2 bg-red-500 text-white rounded-lg text-sm transition-colors mt-1"
+                      className="w-full cursor-pointer flex items-center gap-3 bg-primary py-3 px-5 text-white rounded-lg font-bold transition-colors mt-3"
                     >
-                      <LogOut size={16} /> Logout
+                      <LogOut size={20} /> Logout
                     </button>
                   </motion.div>
                 )}

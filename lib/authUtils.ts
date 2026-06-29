@@ -7,7 +7,7 @@ export type RouteConfig = {
 export const authRoutes = ["/login", "/login?register=true"];
 
 export const commonProtectedRoutes: RouteConfig = {
-  exact: ["/my-profile", "/travel-plans"],
+  exact: ["/my-profile"],
   patterns: [/^\/account/],
 };
 
@@ -18,7 +18,7 @@ export const adminProtectedRoutes: RouteConfig = {
 
 export const userProtectedRoutes: RouteConfig = {
   exact: [],
-  patterns: [],
+  patterns: [/^\/user/],
 };
 
 // check if it's an auth route
