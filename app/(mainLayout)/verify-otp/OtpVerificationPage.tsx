@@ -3,16 +3,10 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { 
-  ShieldCheck, 
-  Loader2, 
-  RefreshCcw,
-  Lock
-} from "lucide-react";
+import { ShieldCheck, Loader2, RefreshCcw, Lock } from "lucide-react";
 
 import { toast } from "sonner";
 import { resendOtp, verifyOtp } from "@/services/auth/otp";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
 function OTPContent() {
   const router = useRouter();
@@ -39,11 +33,12 @@ function OTPContent() {
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (otp.length !== 6) return toast.error("Please enter the full 6-digit code");
+    if (otp.length !== 6)
+      return toast.error("Please enter the full 6-digit code");
 
     setLoading(true);
     try {
-      const res = await verifyOtp({ email, otp, type: 'EMAIL_VERIFICATION' });
+      const res = await verifyOtp({ email, otp, type: "EMAIL_VERIFICATION" });
       if (res?.success) {
         toast.success("Account verified successfully!");
         router.push("/login?verified=true");
@@ -62,7 +57,8 @@ function OTPContent() {
     setResending(true);
     try {
       const res = await resendOtp({
-        email, type: 'EMAIL_VERIFICATION'
+        email,
+        type: "EMAIL_VERIFICATION",
       });
       if (res?.success) {
         toast.success("A fresh verification code has been sent");
@@ -95,12 +91,17 @@ function OTPContent() {
           </h1>
           <p className="text-xl text-slate-500 font-medium">
             We've sent a 6-digit code to <br />
-            <span className="text-black font-bold">{email || "your email"}</span>
+            <span className="text-black font-bold">
+              {email || "your email"}
+            </span>
           </p>
         </div>
 
-        <form onSubmit={handleVerify} className="space-y-10 flex flex-col items-center">
-<InputOTP
+        <form
+          onSubmit={handleVerify}
+          className="space-y-10 flex flex-col items-center"
+        >
+          {/* <InputOTP
   maxLength={6}
   value={otp}
   onChange={(value) => setOtp(value)}
@@ -117,7 +118,7 @@ function OTPContent() {
       ))}
     </InputOTPGroup>
   )}
-/>
+/> */}
 
           <button
             type="submit"
@@ -143,18 +144,23 @@ function OTPContent() {
                 disabled={resending}
                 className="text-primary font-black hover:underline cursor-pointer flex items-center justify-center gap-2 mx-auto"
               >
-                {resending ? <Loader2 className="w-5 h-5 animate-spin" /> : <RefreshCcw size={20} />}
+                {resending ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <RefreshCcw size={20} />
+                )}
                 Resend New Code
               </button>
             ) : (
               <p className="flex items-center justify-center gap-2">
-                Resend available in <span className="text-black font-bold">{timer}s</span>
+                Resend available in{" "}
+                <span className="text-black font-bold">{timer}s</span>
               </p>
             )}
           </div>
-          
-          <button 
-            onClick={() => router.push('/login')}
+
+          <button
+            onClick={() => router.push("/login")}
             className="text-slate-400 font-bold hover:text-black transition-colors cursor-pointer text-base"
           >
             Back to Login

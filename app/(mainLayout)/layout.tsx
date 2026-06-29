@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import "../globals.css";
 import Header from "@/components/shared/layout/Header";
 import { Footer } from "@/components/shared/layout/Footer";
