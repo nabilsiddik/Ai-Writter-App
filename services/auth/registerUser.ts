@@ -33,12 +33,12 @@ export const registerUser = async (_currentState: any, data: any): Promise<any> 
 
         const result = await res.json()
 
-        if (result?.success) {
-            await userLogin({
-                email: registerData?.email,
-                password: registerData?.password
-            });
-        }
+        // if (result?.success) {
+        //     await userLogin({
+        //         email: registerData?.email,
+        //         password: registerData?.password
+        //     });
+        // }
 
         return result
 

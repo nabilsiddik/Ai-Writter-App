@@ -1,11 +1,23 @@
 'use server'
 import { serverFetch } from "@/lib/serverFetch"
-import { deleteCookie } from "@/services/auth/tokenHandler"
+import { deleteCookie, getCookie } from "@/services/auth/tokenHandler"
 
   export const userLogout = async () => {
     const logoutRes = await serverFetch.post('/auth/logout')
     const data = await logoutRes.json();
     await deleteCookie('accessToken')
     await deleteCookie('refreshToken')
-    return data
+    
+    const accessToken = await getCookie('accessToken')
+    const refreshToken = await getCookie('refreshToken')
+
+    if(accessToken || refreshToken){
+      return {
+        success: false,
+      }
+    }
+
+    return {
+      success: true
+    }
   }

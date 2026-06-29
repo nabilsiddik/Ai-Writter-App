@@ -101,23 +101,37 @@ export const userLogin = async (data: {
     const userRole: UserRole = verifiedToken.role;
 
     if (!result.success) {
-      throw new Error(result?.message || "Login failed");
-    }
-
-    if (redirectTo) {
-      const redirectPath = redirectTo.toString();
-      const safeRedirect = redirectPath.startsWith("/")
-        ? redirectPath
-        : `/${redirectPath}`;
-
-      if (isValidRedirectForRole(redirectPath, userRole)) {
-        redirect(`${safeRedirect}?login=true`);
-      } else {
-        redirect(`${getDefaultDashboardRoute(userRole)}?login=true`);
+      return {
+        success: false,
+        message: 'Login Failed'
       }
-    } else {
-      redirect(`/?login=true`);
     }
+
+
+      if (redirectTo) {
+        const redirectPath = redirectTo.toString();
+        const safeRedirect = redirectPath.startsWith("/")
+          ? redirectPath
+          : `/${redirectPath}`;
+
+        if (isValidRedirectForRole(redirectPath, userRole)) {
+          return {
+            success: true,
+            redirectTo: `${safeRedirect}?login=true`,
+          };
+        }
+
+        return {
+          success: true,
+          redirectTo: `${getDefaultDashboardRoute(userRole)}?login=true`,
+        };
+      }
+
+      return {
+        success: true,
+        redirectTo: "/?login=true",
+      };
+
   } catch (err: any) {
     if (err?.digest?.startsWith("NEXT_REDIRECT")) {
       throw err;

@@ -7,17 +7,27 @@ import { ShieldCheck, Loader2, RefreshCcw, Lock } from "lucide-react";
 
 import { toast } from "sonner";
 import { resendOtp, verifyOtp } from "@/services/auth/otp";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp"
 
 function OTPContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get("email") || "";
 
   const [otp, setOtp] = useState("");
+  const [email, setEmail] = useState(searchParams.get("email") || "")
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
   const [timer, setTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
+
+  if(!email){
+    router.push('/')
+  }
 
   useEffect(() => {
     let interval: any;
@@ -31,14 +41,21 @@ function OTPContent() {
     return () => clearInterval(interval);
   }, [timer]);
 
+  useEffect(() => {
+    setEmail(searchParams.get("email") || '')
+  }, [email])
+
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email)
+      return toast.error("Email not provided");
     if (otp.length !== 6)
       return toast.error("Please enter the full 6-digit code");
 
     setLoading(true);
     try {
       const res = await verifyOtp({ email, otp, type: "EMAIL_VERIFICATION" });
+      console.log(res, 'res')
       if (res?.success) {
         toast.success("Account verified successfully!");
         router.push("/login?verified=true");
@@ -120,10 +137,25 @@ function OTPContent() {
   )}
 /> */}
 
+<InputOTP maxLength={6} value={otp}
+  onChange={(value) => setOtp(value)} id="otp-verification" required>
+            <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-14 *:data-[slot=input-otp-slot]:text-xl">
+              <InputOTPSlot index={0} />
+              <InputOTPSlot index={1} />
+              <InputOTPSlot index={2} />
+            </InputOTPGroup>
+            <InputOTPSeparator className="mx-2" />
+            <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-14 *:data-[slot=input-otp-slot]:text-xl">
+              <InputOTPSlot index={3} />
+              <InputOTPSlot index={4} />
+              <InputOTPSlot index={5} />
+            </InputOTPGroup>
+          </InputOTP>
+
           <button
             type="submit"
             disabled={loading || otp.length < 6}
-            className="w-full bg-primary hover:bg-indigo-700 disabled:bg-slate-200 text-white font-black py-5 rounded-2xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-3 cursor-pointer text-xl"
+            className="w-full bg-primary hover:bg-indigo-700 disabled:cursor-not-allowed text-white font-black py-5 rounded-2xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-3 cursor-pointer text-xl"
           >
             {loading ? (
               <Loader2 className="w-6 h-6 animate-spin" />

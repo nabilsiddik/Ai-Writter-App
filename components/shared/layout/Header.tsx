@@ -178,7 +178,7 @@ export default function Navbar({ user }: { user: any }) {
                       onClick={async () => {
                         const res = await userLogout();
                         if (res?.success) {
-                          toast.success("Loged Out");
+                          toast.success("Successfully Logged Out");
                           router.push("/");
                         } else {
                           toast.error("Logout Failed");

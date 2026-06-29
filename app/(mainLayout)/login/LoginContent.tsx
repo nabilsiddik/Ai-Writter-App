@@ -243,7 +243,7 @@ function LoginContent() {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-  const redirect = searchParams.get("redirect") || "/";
+  const redirect = searchParams.get("redirect") || "";
 
   useEffect(() => {
     setIsLogin(!isRegisterParam);
@@ -256,16 +256,19 @@ function LoginContent() {
     try {
       if (isLogin) {
         const res = await userLogin({ email, password, redirectTo: redirect });
-        if (res?.ok) {
-          router.push(`/?login=true`);
+        console.log(res, 'log res');
+        if (res?.success) {
+          toast.success('Successfully Logged In')
+          router.push(res.redirectTo);
         } else {
-          toast.error(res?.message || "Invalid credentials provided");
+          toast.error(res?.message || "Invalid credentials");
         }
       } else {
         const res = await registerUser(null, { fullName, email, password });
+        console.log(res, 'l res');
         if (res?.success) {
           toast.success("Account created successfully");
-          router.push(`/?loginReg=true`);
+          router.push(`/verify-otp?email=${res?.data?.result?.email}`);
           setIsLogin(true);
         } else {
           toast.error(res?.message || "Registration failed");
