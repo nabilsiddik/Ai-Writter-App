@@ -103,35 +103,36 @@ export const userLogin = async (data: {
     if (!result.success) {
       return {
         success: false,
-        message: 'Login Failed'
-      }
+        message: "Login Failed",
+      };
     }
 
+    if (redirectTo) {
+      const redirectPath = redirectTo.toString();
+      const safeRedirect = redirectPath.startsWith("/")
+        ? redirectPath
+        : `/${redirectPath}`;
 
-      if (redirectTo) {
-        const redirectPath = redirectTo.toString();
-        const safeRedirect = redirectPath.startsWith("/")
-          ? redirectPath
-          : `/${redirectPath}`;
-
-        if (isValidRedirectForRole(redirectPath, userRole)) {
-          return {
-            success: true,
-            redirectTo: `${safeRedirect}?login=true`,
-          };
-        }
-
+      if (isValidRedirectForRole(redirectPath, userRole)) {
         return {
           success: true,
-          redirectTo: `${getDefaultDashboardRoute(userRole)}?login=true`,
+          accessToken: accessTokenObj?.accessToken,
+          redirectTo: `${safeRedirect}?login=true`,
         };
       }
 
       return {
         success: true,
-        redirectTo: "/?login=true",
+        accessToken: accessTokenObj?.accessToken,
+        redirectTo: `${getDefaultDashboardRoute(userRole)}?login=true`,
       };
+    }
 
+    return {
+      success: true,
+      accessToken: accessTokenObj?.accessToken,
+      redirectTo: "/?login=true",
+    };
   } catch (err: any) {
     if (err?.digest?.startsWith("NEXT_REDIRECT")) {
       throw err;

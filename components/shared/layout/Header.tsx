@@ -65,10 +65,7 @@ export default function Navbar({ user }: { user: any }) {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-8">
-          <Link
-            href="/tools"
-            className="font-medium transition-colors"
-          >
+          <Link href="/tools" className="font-medium transition-colors">
             Tools
           </Link>
 
@@ -119,10 +116,7 @@ export default function Navbar({ user }: { user: any }) {
             </AnimatePresence>
           </div>
 
-          <Link
-            href="/pricing"
-            className="font-medium transition-colors"
-          >
+          <Link href="/pricing" className="font-medium transition-colors">
             Pricing
           </Link>
         </div>
@@ -148,44 +142,60 @@ export default function Navbar({ user }: { user: any }) {
                   >
                     <div className="px-3 py-2 border-b border-white/5 mb-1">
                       <p className="text-2xl font-bold mb-3">
-                        Hi, <span className="text-primary">{user?.fullName}</span>
+                        Hi,{" "}
+                        <span className="text-primary">{user?.fullName}</span>
                       </p>
                       <p className="text-md font-bold">{user?.email}</p>
                       <p className=" text-gray-700">
-                        {user?.plan === "STARTER" ? 
-
+                        {user?.plan === "STARTER" ? (
                           <div className="flex items-center gap-2">
-                            <Crown size={20}/>
+                            <Crown size={20} />
                             Startar Plan
                           </div>
-                        
-                        : 
-
-                        user?.plan === 'PREMIUM' ? 
+                        ) : user?.plan === "PREMIUM" ? (
                           <div className="flex items-center gap-2">
-                            <Gem size={20}/>
+                            <Gem size={20} />
                             Premium Plan
                           </div>
-                        :
-                          'Free Member'
-                        }
+                        ) : (
+                          "Free Member"
+                        )}
                       </p>
                     </div>
 
-                    {user?.role === 'ADMIN' && 
+                    {user?.role === "ADMIN" && (
                       <div className="mx-5 border-t border-b py-3 font-medium text-lg">
                         <ul>
-                          <Link href={user?.role === 'ADMIN' ? '/admin/dashboard/overview' : '/'}>
-                            <li className="flex items-center gap-3"><LayoutGrid/> Admin Dashboard</li>
+                          <Link
+                            href={
+                              user?.role === "ADMIN"
+                                ? "/admin/dashboard/overview"
+                                : "/"
+                            }
+                          >
+                            <li className="flex items-center gap-3">
+                              <LayoutGrid /> Admin Dashboard
+                            </li>
                           </Link>
                         </ul>
                       </div>
-                    }
-                    
+                    )}
+
                     <button
                       onClick={async () => {
                         const res = await userLogout();
                         if (res?.success) {
+                          if (
+                            typeof window !== "undefined" &&
+                            window.chrome?.runtime?.sendMessage
+                          ) {
+                            window.chrome.runtime.sendMessage(
+                              process.env.NEXT_PUBLIC_EXTENSION_ID!,
+                              {
+                                type: "LOGOUT_EVENT",
+                              },
+                            );
+                          }
                           toast.success("Successfully Logged Out");
                           router.push("/");
                         } else {

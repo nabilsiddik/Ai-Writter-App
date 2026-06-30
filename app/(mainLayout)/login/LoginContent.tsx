@@ -213,7 +213,6 @@
 //   );
 // }
 
-
 "use client";
 
 import React, { useState, Suspense, useEffect } from "react";
@@ -231,7 +230,12 @@ import { registerUser } from "@/services/auth/registerUser";
 import { userLogin } from "@/services/auth/userLogin";
 import { toast } from "sonner";
 import { FcGoogle } from "react-icons/fc";
-import { Button } from "@/components/ui/button";
+
+declare global {
+  interface Window {
+    chrome: any;
+  }
+}
 
 function LoginContent() {
   const searchParams = useSearchParams();
@@ -256,16 +260,30 @@ function LoginContent() {
     try {
       if (isLogin) {
         const res = await userLogin({ email, password, redirectTo: redirect });
-        console.log(res, 'log res');
+        console.log(res, "log res");
         if (res?.success) {
-          toast.success('Successfully Logged In')
+          console.log(res?.accessToken, "acce");
+          if (
+            typeof window !== "undefined" &&
+            window.chrome?.runtime?.sendMessage
+          ) {
+            window.chrome.runtime.sendMessage(
+              process.env.NEXT_PUBLIC_EXTENSION_ID!,
+              {
+                type: "AUTH_TOKEN",
+                token: res.accessToken,
+              },
+            );
+          }
+
+          toast.success("Successfully Logged In");
           router.push(res.redirectTo);
         } else {
           toast.error(res?.message || "Invalid credentials");
         }
       } else {
         const res = await registerUser(null, { fullName, email, password });
-        console.log(res, 'l res');
+        console.log(res, "l res");
         if (res?.success) {
           toast.success("Account created successfully");
           router.push(`/verify-otp?email=${res?.data?.result?.email}`);
@@ -285,8 +303,10 @@ function LoginContent() {
     window.location.href = `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/google`;
   };
 
-  const inputStyles = "w-full pl-14 pr-6 py-5 bg-white border-2 border-slate-100 rounded-2xl focus:outline-none focus:border-primary transition-all text-black placeholder:text-slate-300 text-lg";
-  const iconStyles = "absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-300";
+  const inputStyles =
+    "w-full pl-14 pr-6 py-5 bg-white border-2 border-slate-100 rounded-2xl focus:outline-none focus:border-primary transition-all text-black placeholder:text-slate-300 text-lg";
+  const iconStyles =
+    "absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-300";
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-6 mt-8">
@@ -374,8 +394,12 @@ function LoginContent() {
         </form>
 
         <div className="relative flex items-center justify-center">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
-            <span className="relative bg-white px-4 text-lg font-bold text-slate-300 uppercase tracking-widest">or</span>
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-100"></div>
+          </div>
+          <span className="relative bg-white px-4 text-lg font-bold text-slate-300 uppercase tracking-widest">
+            or
+          </span>
         </div>
 
         <button
