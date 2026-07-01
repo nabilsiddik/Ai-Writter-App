@@ -233,7 +233,7 @@ import { FcGoogle } from "react-icons/fc";
 
 declare global {
   interface Window {
-    chrome: any;
+    chrome: typeof chrome;
   }
 }
 
