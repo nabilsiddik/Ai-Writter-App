@@ -57,7 +57,7 @@ export default function Navbar({ user }: { user: any }) {
           <div className="p-2 bg-primary rounded-lg group-hover:rotate-12 transition-transform shadow-lg shadow-indigo-500/20">
             <Sparkles size={20} className="text-white" />
           </div>
-          <span className="text-xl font-bold tracking-tighter flex items-center gap-1">
+          <span className="text-2xl font-bold tracking-tighter flex items-center gap-1">
             <span className="text-primary">Ai</span> ContentWritter
             <span className="text-primary"></span>
           </span>
@@ -212,7 +212,7 @@ export default function Navbar({ user }: { user: any }) {
             </div>
           ) : (
             <Link href={"/login"}>
-              <Button className="w-full relative group overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 disabled:from-gray-700 disabled:to-gray-800 text-white font-bold py-4 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <Button className="w-full relative group overflow-hidden bg-primary disabled:from-gray-700 disabled:to-gray-800 text-white font-bold py-4 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer">
                 Login / Signup
               </Button>
             </Link>

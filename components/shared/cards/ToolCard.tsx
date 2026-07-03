@@ -21,7 +21,6 @@
 //   },
 // };
 
-
 // function GenerationCard({ gen }: { gen: any }) {
 //   return (
 //     <motion.div
@@ -114,7 +113,6 @@
 
 // export default GenerationCard
 
-
 // components/home/ToolCard.tsx
 "use client";
 import { motion } from "framer-motion";
@@ -132,24 +130,27 @@ export const ToolCard = ({ title, icon, href, isNew }: ToolCardProps) => {
   return (
     <Link href={href} target="_blank">
       <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      whileHover={{ y: -5 }}
-      className="relative bg-white border border-slate-200 rounded-xl p-8 flex flex-col items-center text-center cursor-pointer shadow-sm hover:shadow-md transition-all"
-    >
-      {isNew && (
-        <span className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-bold uppercase">
-          New
-        </span>
-      )}
-      <div className="mb-4 text-primary transition-transform group-hover:scale-110">
-        {icon}
-      </div>
-      <Link href={href} className="text-lg font-bold text-black hover:text-primary transition-colors">
-        {title}
-      </Link>
-    </motion.div>
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        whileHover={{ y: -5 }}
+        className="relative bg-white border border-slate-200 rounded-xl p-8 flex flex-col items-center text-center cursor-pointer shadow-sm hover:shadow-md transition-all"
+      >
+        {isNew && (
+          <span className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-bold uppercase">
+            New
+          </span>
+        )}
+        <div className="mb-4 text-primary transition-transform group-hover:scale-110">
+          {icon}
+        </div>
+        <Link
+          href={href}
+          className="text-xl font-bold text-black hover:text-primary transition-colors"
+        >
+          {title}
+        </Link>
+      </motion.div>
     </Link>
   );
 };
