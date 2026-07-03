@@ -4,6 +4,7 @@ import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
+import { setAuthSession } from "@/services/auth/setAuthSession";
 
 function AuthSuccessContent() {
   const router = useRouter();
@@ -11,35 +12,39 @@ function AuthSuccessContent() {
   const token = searchParams.get("accessToken");
 
   useEffect(() => {
-    if (token) {
-      if (
-        typeof window !== "undefined" &&
-        window.chrome?.runtime?.sendMessage
-      ) {
-        const EXTENSION_ID = process.env.NEXT_PUBLIC_EXTENSION_ID;
+    const handleSync = async () => {
+      if (token) {
+        await setAuthSession(token);
+        if (
+          typeof window !== "undefined" &&
+          window.chrome?.runtime?.sendMessage
+        ) {
+          const EXTENSION_ID = process.env.NEXT_PUBLIC_EXTENSION_ID;
 
-        window.chrome.runtime.sendMessage(
-          EXTENSION_ID!,
-          {
-            type: "AUTH_TOKEN",
-            token: token,
-          },
-          (response) => {
-            if (window.chrome.runtime.lastError) {
-              console.warn("Extension not installed, skipping sync.");
-            } else {
-              console.log("Extension Synced via Google Login");
-            }
-          },
-        );
+          window.chrome.runtime.sendMessage(
+            EXTENSION_ID!,
+            {
+              type: "AUTH_TOKEN",
+              token: token,
+            },
+            (response) => {
+              if (window.chrome.runtime.lastError) {
+                console.warn("Extension not installed, skipping sync.");
+              } else {
+                console.log("Extension Synced via Google Login");
+              }
+            },
+          );
+        }
+
+        // 2. Clear the token from the URL for security and redirect
+        toast.success("Identity verified. Welcome back!");
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
       }
-
-      // 2. Clear the token from the URL for security and redirect
-      toast.success("Identity verified. Welcome back!");
-      setTimeout(() => {
-        router.push("/");
-      }, 2000);
-    }
+    };
+    handleSync();
   }, [token, router]);
 
   return (
