@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, HelpCircle, Plus, Minus } from "lucide-react";
+import Link from "next/link";
 
 const faqs = [
   {
@@ -109,9 +110,11 @@ export default function FAQSection() {
           <p className="text-lg text-slate-500 mb-6">
             Still have questions? We're here to help.
           </p>
-          <button className="px-8 py-3 bg-white border border-slate-300 hover:bg-slate-50 text-black font-bold rounded-xl transition-all cursor-pointer">
+          <Link target="_blank" href={'https://wa.me/8801957282230?text=Hello!%20I%20need%20help%20and%20support.'}>
+            <button className="px-8 py-3 bg-white border border-slate-300 hover:bg-slate-50 text-black font-bold rounded-xl transition-all cursor-pointer">
             CONTACT SUPPORT
           </button>
+          </Link>
         </div>
 
       </div>

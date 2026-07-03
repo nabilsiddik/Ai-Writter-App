@@ -34,6 +34,12 @@ export async function proxy(request: NextRequest) {
     }
   }
 
+  if(!accessToken && (pathname.startsWith('/my-generations') || pathname.startsWith('/tools/'))){
+    return NextResponse.redirect(
+      new URL('/login', request.url)
+    );
+  }
+
   if(pathname === '/admin/dashboard'){
     return NextResponse.redirect(
       new URL('/admin/dashboard/overview', request.url)

@@ -6,10 +6,12 @@ import MarqueeSection from "@/components/sections/home/MarqueSection";
 import ToolGrid from "@/components/sections/home/ToolGridSection";
 import TrustStats from "@/components/sections/home/TrustSection";
 import PricingSection from "@/components/sections/pricing/PricingSection";
+import { getPublicStats } from "@/services/admin/userManagement";
 import getLogedInUser from "@/services/user/userManagement";
 
 const page = async () => {
   const user = await getLogedInUser();
+  const publicStats = await getPublicStats()
   return (
     <div>
       {/* <HomePageContent user={user}/> */}
@@ -18,7 +20,7 @@ const page = async () => {
       </div>
       <MarqueeSection />
       <ToolGrid />
-      <TrustStats />
+      <TrustStats publicStats={publicStats}/>
       <div className="py-20">
         <PricingSection user={user} />
       </div>

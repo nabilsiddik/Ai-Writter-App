@@ -19,3 +19,23 @@ export const getAllUsers = async (queryString?: string) => {
     };
   }
 };
+
+
+export const getPublicStats = async () => {
+  try {
+    const res = await serverFetch.get(
+      `/admin/public-stats`
+    );
+    const result = await res.json();
+    return result?.data || null;
+  } catch (error: any) {
+    return {
+      success: false,
+      message: `${
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Something went wrong while getting public stats"
+      }`,
+    };
+  }
+};

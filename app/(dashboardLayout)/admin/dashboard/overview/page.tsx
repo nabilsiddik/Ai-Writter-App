@@ -1,4 +1,3 @@
-import React from 'react'
 import OverviewPage from './OverviewPage'
 import { getOverviewData } from '@/services/admin/overviewManagement'
 

@@ -266,6 +266,7 @@
 import { subscribeToPlan } from "@/services/subscription";
 import { motion } from "framer-motion";
 import { Check, ArrowRight, ShieldCheck, Zap, Star } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -370,7 +371,7 @@ export default function PricingSection({ user }: { user: any }) {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {pricingPlans.map((plan, index) => (
             <motion.div
               key={plan.name}
@@ -414,7 +415,8 @@ export default function PricingSection({ user }: { user: any }) {
                 ))}
               </div>
 
-              <button
+              {user?.id ?
+                <button
                 disabled={plan.plan === "FREE" || user?.plan === plan.plan}
                 onClick={() => handleSubscription(plan.plan as "STARTAR" | "PREMIUM")}
                 className={`w-full py-4 rounded-xl text-lg font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
@@ -426,6 +428,20 @@ export default function PricingSection({ user }: { user: any }) {
                 {plan.buttonText}
                 {user?.plan !== plan.plan && <ArrowRight size={20} />}
               </button>
+              : 
+                <Link href={'/login'} target="_blank">
+                  <button
+                className={`w-full py-4 rounded-xl text-lg font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  plan.isPopular
+                    ? "bg-primary text-white hover:bg-indigo-700 shadow-lg shadow-primary/20"
+                    : "bg-slate-100 text-black hover:bg-slate-200"
+                } disabled:opacity-50 disabled:cursor-default`}
+              >
+                {plan.buttonText}
+                {user?.plan !== plan.plan && <ArrowRight size={20} />}
+              </button>
+                </Link>
+              }
             </motion.div>
           ))}
         </div>

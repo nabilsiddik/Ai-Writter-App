@@ -11,6 +11,7 @@ import {
   Play,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function ExtensionCTA() {
   return (
@@ -56,7 +57,7 @@ export default function ExtensionCTA() {
               ))}
             </div>
 
-            <div className="flex justify-center gap-5 flex-wrap">
+            <div className="flex gap-5 flex-wrap">
               <button className="bg-primary text-white hover:bg-transparent hover:text-primary px-8 py-5 border-2 border-primary rounded-xl text-lg font-bold flex items-center gap-3 transition-all cursor-pointer shadow-lg shadow-primary/20">
                 <Download size={28} />
                 Download Extension
@@ -119,9 +120,11 @@ export default function ExtensionCTA() {
               />
               {/* Play Button Overlay */}
               <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-primary shadow-2xl">
+                <Link target="_blank" href="https://www.youtube.com/@nabil-siddik">
+                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-primary shadow-2xl">
                   <PlayCircle size={48} />
                 </div>
+                </Link>
               </div>
             </motion.div>
           </div>
