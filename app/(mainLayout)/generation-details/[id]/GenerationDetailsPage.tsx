@@ -62,7 +62,7 @@ export default function GenerationDetails({
   const [isConnecting, setIsConnecting] = useState(false);
   const [isWooModalOpen, setIsWooModalOpen] = useState(false);
 
-  const [document, setDocument] = useState<any>(genDetails);
+  const [doc, setDoc] = useState<any>(genDetails);
   const [editableSections, setEditableSections] = useState<any[]>(
     genDetails?.sections || [],
   );
@@ -84,7 +84,7 @@ export default function GenerationDetails({
 
   useEffect(() => {
     if (genDetails) {
-      setDocument(genDetails);
+      setDoc(genDetails);
       setEditableSections(genDetails?.sections || []);
     }
   }, [genDetails]);
@@ -98,10 +98,10 @@ export default function GenerationDetails({
   };
 
   const handleExportInPDF = async () => {
-    if (!document?.id) return toast.error("Document ID missing");
+    if (!doc?.id) return toast.error("Document ID missing");
     setPdfGenerating(true);
     try {
-      const result = await generatePDF(document?.id, {
+      const result = await generatePDF(doc?.id, {
         sections: editableSections,
       });
       if (result?.success && result?.data?.url) {
@@ -117,10 +117,10 @@ export default function GenerationDetails({
   };
 
   const handleOpenInGoogleDoc = async () => {
-    if (!document?.id) return toast.error("Document ID missing");
+    if (!doc?.id) return toast.error("Document ID missing");
     setGoogleDocGenerating(true);
     try {
-      const result = await openInGoogleDoc(document?.id, {
+      const result = await openInGoogleDoc(doc?.id, {
         sections: editableSections,
       });
 
@@ -141,10 +141,10 @@ export default function GenerationDetails({
   };
 
   const handleExportInMsWord = async () => {
-    if (!document?.id) return toast.error("Document ID missing");
+    if (!doc?.id) return toast.error("Document ID missing");
     setMsDocxGenerating(true);
     try {
-      const blob = await exportMsDocx(document?.id, {
+      const blob = await exportMsDocx(doc?.id, {
         sections: editableSections,
       });
       console.log(blob, "blobbbb");
@@ -152,7 +152,7 @@ export default function GenerationDetails({
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", `${document?.topic || "Document"}.docx`);
+        link.setAttribute("download", `${doc?.topic || "Document"}.docx`);
         document.body.appendChild(link);
         link.click();
         link.remove();
@@ -168,12 +168,12 @@ export default function GenerationDetails({
   };
 
   const handleUploadToWoocommerce = async () => {
-    if (!document?.id) return toast.error("Document ID missing");
+    if (!doc?.id) return toast.error("Document ID missing");
     if (!formData.regularPrice || !formData.stock)
       return toast.error("Please fill in Price and Stock");
     setUploadingWoo(true);
     try {
-      const result = await publishToWoocommerce(document?.id, {
+      const result = await publishToWoocommerce(doc?.id, {
         sections: editableSections,
         ...formData,
       });
@@ -190,12 +190,7 @@ export default function GenerationDetails({
   };
 
   const handleGoogleLogin = async () => {
-    try {
-      const res = await googleLogin();
-      if (res?.success && res?.data?.url) router.push(res.data.url);
-    } catch (err) {
-      toast.error("Auth Error");
-    }
+    window.location.href = `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/google`;
   };
 
   const handleConnectWoocommerce = async () => {
@@ -400,7 +395,7 @@ export default function GenerationDetails({
           </button>
           <div className="h-4 w-px bg-slate-200" />
           <div className="flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-lg text-primary font-black text-sm uppercase tracking-widest border border-slate-200">
-            <Sparkles size={14} /> {document?.docType}
+            <Sparkles size={14} /> {doc?.docType}
           </div>
         </div>
 
@@ -412,38 +407,38 @@ export default function GenerationDetails({
         >
           <div className="lg:col-span-2 space-y-6">
             <h2 className="text-2xl lg:text-3xl font-black leading-tight text-slate-900">
-              {document?.topic}
+              {doc?.topic}
             </h2>
-            {document?.docType === "ASSIGNMENT" && (
+            {doc?.docType === "ASSIGNMENT" && (
               <div className="flex flex-wrap gap-8">
-                {document?.universityName && (
+                {doc?.universityName && (
                   <div className="flex items-center gap-3 text-slate-600 font-bold">
                     <University size={22} className="text-slate-400" />{" "}
-                    {document.universityName}
+                    {doc.universityName}
                   </div>
                 )}
                 <div className="flex items-center gap-3 text-slate-600 font-bold">
                   <Layers size={22} className="text-slate-400" /> Sec{" "}
-                  {document?.section || "N/A"}
+                  {doc?.section || "N/A"}
                 </div>
                 <div className="flex items-center gap-3 text-slate-600 font-bold">
                   <Hash size={22} className="text-slate-400" /> Intake{" "}
-                  {document?.intake || "N/A"}
+                  {doc?.intake || "N/A"}
                 </div>
               </div>
             )}
           </div>
-          {document?.docType === "ASSIGNMENT" && (
+          {doc?.docType === "ASSIGNMENT" && (
             <div className="bg-white border border-slate-200 rounded-2xl p-8 space-y-6 shadow-sm">
               <div className="space-y-1">
                 <p className="font-bold ">Submitted By</p>
-                <p className="text-xl font-black">{document?.submittedBy}</p>
+                <p className="text-xl font-black">{doc?.submittedBy}</p>
               </div>
               <div className="space-y-1">
                 <p className="font-bold ">Created On</p>
                 <p className="text-xl font-black text-slate-700">
-                  {document?.createdAt
-                    ? new Date(document?.createdAt).toLocaleDateString()
+                  {doc?.createdAt
+                    ? new Date(doc?.createdAt).toLocaleDateString()
                     : "N/A"}
                 </p>
               </div>
@@ -490,7 +485,7 @@ export default function GenerationDetails({
           </div>
         </section>
 
-        {document?.docType === "PRODUCT_DESC" && (
+        {doc?.docType === "PRODUCT_DESC" && (
           <motion.section
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
