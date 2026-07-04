@@ -11,6 +11,7 @@ export default function ExtensionHandshake() {
     const existingId = document.documentElement.getAttribute(
       "data-aicandy-extension-id",
     );
+    console.log(existingId, 'ex id');
     if (existingId) saveId(existingId);
 
     const handleResponse = (event: any) => {

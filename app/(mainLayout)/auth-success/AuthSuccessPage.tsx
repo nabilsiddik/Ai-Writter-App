@@ -15,27 +15,26 @@ function AuthSuccessContent() {
     const handleSync = async () => {
       if (token) {
         await setAuthSession(token);
-        if (
-          typeof window !== "undefined" &&
-          window.chrome?.runtime?.sendMessage
-        ) {
-          const EXTENSION_ID = process.env.NEXT_PUBLIC_EXTENSION_ID;
+        const detectedId = window.sessionStorage.getItem("DETECTED_EXT_ID");
 
-          window.chrome.runtime.sendMessage(
-            EXTENSION_ID!,
-            {
-              type: "AUTH_TOKEN",
-              token: token,
-            },
-            (response) => {
-              if (window.chrome.runtime.lastError) {
-                console.warn("Extension not installed, skipping sync.");
-              } else {
-                console.log("Extension Synced via Google Login");
-              }
-            },
-          );
-        }
+          console.log(detectedId, 'detec id');
+
+          if (detectedId && window.chrome?.runtime?.sendMessage) {
+            window.chrome.runtime.sendMessage(
+              detectedId,
+              { type: "AUTH_TOKEN", token: token },
+              (response) => {
+                if (window.chrome.runtime.lastError) {
+                  console.error(
+                    "Sync Error:",
+                    window.chrome.runtime.lastError.message,
+                  );
+                } else {
+                  console.log("Extension Synced Successfully");
+                }
+              },
+            );
+          }
 
         // 2. Clear the token from the URL for security and redirect
         toast.success("Identity verified. Welcome back!");

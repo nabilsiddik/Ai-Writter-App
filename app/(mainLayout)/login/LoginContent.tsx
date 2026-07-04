@@ -48,6 +48,8 @@ function LoginContent() {
         if (res?.success) {
           const detectedId = window.sessionStorage.getItem("DETECTED_EXT_ID");
 
+          console.log(detectedId, 'detec id');
+
           if (detectedId && window.chrome?.runtime?.sendMessage) {
             window.chrome.runtime.sendMessage(
               detectedId,
