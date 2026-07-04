@@ -4,7 +4,6 @@ export default function TrustStats({publicStats}: {
   publicStats: any
 }) {
 
-  console.log(publicStats, 'dfkdjfk');
   return (
     <section className="bg-slate-50 py-20 border-y border-slate-200">
       <div className="max-w-7xl mx-auto px-6">

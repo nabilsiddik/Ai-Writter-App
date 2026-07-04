@@ -33,11 +33,6 @@ export const bkashPayment = async ({
   transactionId: string;
   planName: "STARTAR" | "PREMIUM" | undefined;
 }) => {
-  console.log({
-    bkashNumber,
-    transactionId,
-    planName,
-  });
   try {
     const res = await serverFetch.post(`/payment/bkash-payment`, {
       body: JSON.stringify({

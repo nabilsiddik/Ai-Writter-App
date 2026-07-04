@@ -1,7 +1,6 @@
 import React from "react";
 
 const PageHeader = ({ title, description, bannerImage }: any) => {
-  console.log(bannerImage, "bg");
   return (
     <div
       className="relative bg-cover bg-center h-70 lg:h-80 w-full flex items-center justify-center border-b border-white"

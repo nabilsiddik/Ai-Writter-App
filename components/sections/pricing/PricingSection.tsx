@@ -32,8 +32,6 @@ export default function PricingSection({ user }: { user: any }) {
   const [plan, setPlan] = useState<"STARTAR" | "PREMIUM">();
   const router = useRouter();
 
-  console.log(plan, "my pln");
-
   const [formData, setFormData] = useState({
     bkashNumber: "",
     transactionId: "",

@@ -55,7 +55,6 @@ function OTPContent() {
     setLoading(true);
     try {
       const res = await verifyOtp({ email, otp, type: "EMAIL_VERIFICATION" });
-      console.log(res, 'res')
       if (res?.success) {
         toast.success("Account verified successfully!");
         router.push("/login?verified=true");

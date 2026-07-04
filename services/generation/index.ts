@@ -82,7 +82,6 @@ export const generationDetails = async (id: string) => {
   try {
     const res = await serverFetch.get(`/assignment/${id}`);
     const result = await res.json();
-    console.log(result, "my result");
     return result?.data || null;
   } catch (error: any) {
     return {
@@ -145,7 +144,6 @@ export const exportMsDocx = async (id: string, payload: any) => {
         "content-type": "application/json",
       },
     });
-    console.log(res, 'docx res');
     const blob = await res.blob();
     return blob || null;
   } catch (error: any) {

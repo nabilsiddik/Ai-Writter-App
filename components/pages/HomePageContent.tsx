@@ -55,8 +55,6 @@ export default function HomePageContent({ user }: { user: any }) {
     date: new Date().toLocaleDateString(),
   });
 
-  console.log(user, "user");
-
   const handleGenerateAIContent = async () => {
     setLoading(true);
     try {

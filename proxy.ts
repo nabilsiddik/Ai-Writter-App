@@ -12,16 +12,9 @@ import { UserRole } from "./types/user.interface";
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   
-  // 1. Get Token and Role
+  // Get Token and Role
   const accessToken = (await getCookie("accessToken")) || null;
   let userRole: UserRole | null = null;
-
-  console.log({
-    accessToken,
-    pathname
-  })
-
-
 
   if (accessToken) {
     try {

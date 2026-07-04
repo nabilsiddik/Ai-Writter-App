@@ -17,8 +17,6 @@ export default function UserManagementPage({ userRes }: { userRes: any }) {
   const users = userRes?.data || [];
   const meta = userRes?.meta;
 
-  console.log(userRes, "res");
-
   const userFilters = [
     {
       key: "plan",

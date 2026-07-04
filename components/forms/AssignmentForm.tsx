@@ -42,15 +42,11 @@ const AssignmentForm = () => {
     e.preventDefault();
     setLoading(true);
 
-    console.log(formData, "my form");
-
     const toastId = toast.loading("Generating assignment content...");
 
     try {
       const res = await generateContent(formData);
       const data = await res.data;
-
-      console.log(res, "my res");
 
       if (res?.success) {
         toast.success("Assignment Content Generated", { id: toastId });

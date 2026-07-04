@@ -14,6 +14,14 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function ExtensionCTA() {
+    const handleDownload = () => {
+      const link = document.createElement("a");
+      link.href = "/downloads/latest/ai-content-writter-extension.zip";
+      link.download = "AI-Content-Writer-Extension.zip";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
   return (
     <section className="max-w-7xl mx-auto px-5 bg-white py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto">
@@ -58,7 +66,7 @@ export default function ExtensionCTA() {
             </div>
 
             <div className="flex gap-5 flex-wrap">
-              <button className="bg-primary text-white hover:bg-transparent hover:text-primary px-8 py-5 border-2 border-primary rounded-xl text-lg font-bold flex items-center gap-3 transition-all cursor-pointer shadow-lg shadow-primary/20">
+              <button onClick={handleDownload} className="bg-primary text-white hover:bg-transparent hover:text-primary px-8 py-5 border-2 border-primary rounded-xl text-lg font-bold flex items-center gap-3 transition-all cursor-pointer shadow-lg shadow-primary/20">
                 <Download size={28} />
                 Download Extension
               </button>

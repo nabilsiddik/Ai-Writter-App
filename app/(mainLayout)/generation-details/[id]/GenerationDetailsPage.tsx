@@ -52,7 +52,6 @@ export default function GenerationDetails({
   genDetails: any;
   wooStore: any;
 }) {
-  console.log(wooStore, "wooo");
   const router = useRouter();
   const [pdfGenerating, setPdfGenerating] = useState(false);
   const [googleDocGenerating, setGoogleDocGenerating] = useState(false);
@@ -124,8 +123,6 @@ export default function GenerationDetails({
         sections: editableSections,
       });
 
-      console.log(result, "google");
-
       if (result?.success && result?.data?.url) {
         window.open(result.data.url, "_blank");
       } else if (result?.error?.statusCode === 401) {
@@ -147,7 +144,6 @@ export default function GenerationDetails({
       const blob = await exportMsDocx(doc?.id, {
         sections: editableSections,
       });
-      console.log(blob, "blobbbb");
       if (blob) {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
