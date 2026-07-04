@@ -262,22 +262,28 @@ function LoginContent() {
         const res = await userLogin({ email, password, redirectTo: redirect });
         console.log(res, "log res");
         if (res?.success) {
-          console.log(res?.accessToken, "acce");
-          if (
-            typeof window !== "undefined" &&
-            window.chrome?.runtime?.sendMessage
-          ) {
+          const detectedId = window.sessionStorage.getItem("DETECTED_EXT_ID");
+          console.log("Attempting sync with ID:", detectedId);
+
+          if (detectedId && window.chrome?.runtime?.sendMessage) {
             window.chrome.runtime.sendMessage(
-              process.env.NEXT_PUBLIC_EXTENSION_ID!,
-              {
-                type: "AUTH_TOKEN",
-                token: res.accessToken,
+              detectedId,
+              { type: "AUTH_TOKEN", token: res.accessToken },
+              (response) => {
+                if (window.chrome.runtime.lastError) {
+                  console.error(
+                    "Sync Error:",
+                    window.chrome.runtime.lastError.message,
+                  );
+                } else {
+                  console.log("✅ Extension Synced Successfully");
+                }
               },
             );
           }
 
           toast.success("Successfully Logged In");
-          router.push(res.redirectTo);
+          // router.push(res.redirectTo);
         } else {
           toast.error(res?.message || "Invalid credentials");
         }

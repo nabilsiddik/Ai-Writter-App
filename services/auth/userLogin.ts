@@ -124,7 +124,7 @@ export const userLogin = async (data: {
       return {
         success: true,
         accessToken: accessTokenObj?.accessToken,
-        redirectTo: `${getDefaultDashboardRoute(userRole)}?login=true`,
+        // redirectTo: `${getDefaultDashboardRoute(userRole)}?login=true`,
       };
     }
 

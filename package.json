@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/chrome": "^0.2.0",
+    "@types/chrome": "^0.2.2",
     "@types/country-list": "^2.1.4",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { Open_Sans } from "next/font/google";
+import ExtensionHandshake from "@/components/shared/ExtensionHandshake";
 
 export const openSans = Open_Sans({
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${openSans.className} antialiased`}
       >
+        <ExtensionHandshake />
         {children}
         <Toaster richColors position="top-right" />
       </body>
