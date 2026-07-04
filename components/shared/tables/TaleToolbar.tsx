@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { Search, Filter, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 interface FilterOption {
@@ -18,7 +17,10 @@ interface TableToolbarProps {
   }[];
 }
 
-export default function TableToolbar({ placeholder, filterOptions }: TableToolbarProps) {
+export default function TableToolbar({
+  placeholder,
+  filterOptions,
+}: TableToolbarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -27,7 +29,7 @@ export default function TableToolbar({ placeholder, filterOptions }: TableToolba
     const params = new URLSearchParams(searchParams.toString());
     if (value) params.set(key, value);
     else params.delete(key);
-    params.set("page", "1"); // Reset to page 1 on filter
+    params.set("page", "1");
     router.push(`${pathname}?${params.toString()}`);
   };
 
@@ -36,13 +38,16 @@ export default function TableToolbar({ placeholder, filterOptions }: TableToolba
   return (
     <div className="flex flex-col lg:flex-row gap-6 mb-10 items-center justify-between">
       <div className="relative w-full lg:w-96 group">
-        <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={22} />
+        <Search
+          className="absolute left-5 top-1/2 -translate-y-1/2 transition-colors"
+          size={22}
+        />
         <input
           type="text"
           placeholder={placeholder}
           defaultValue={searchParams.get("searchTerm") || ""}
           onChange={(e) => updateQuery("searchTerm", e.target.value)}
-          className="w-full pl-14 pr-6 py-4 bg-white border-2 border-slate-100 rounded-2xl text-lg focus:outline-none focus:border-primary transition-all shadow-sm"
+          className="w-full pl-14 pr-6 py-4 bg-white text-black border-2 border-slate-100 rounded-2xl text-lg focus:outline-none focus:border-primary transition-all shadow-sm"
         />
       </div>
 
@@ -56,13 +61,15 @@ export default function TableToolbar({ placeholder, filterOptions }: TableToolba
           >
             <option value="">{filter.label}</option>
             {filter.options.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
             ))}
           </select>
         ))}
 
         {searchParams.toString() !== "" && (
-          <button 
+          <button
             onClick={clearFilters}
             className="p-4 bg-red-50 text-red-500 rounded-2xl hover:bg-red-100 transition-colors cursor-pointer"
           >

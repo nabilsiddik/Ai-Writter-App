@@ -122,7 +122,6 @@
 
 // export default TablePagination;
 
-
 "use client";
 
 import React from "react";
@@ -153,44 +152,54 @@ export default function TablePagination({ meta }: { meta: any }) {
   return (
     <div className="flex flex-col md:flex-row items-center justify-between gap-8 mt-12 bg-slate-50 p-8 rounded-[30px] border border-slate-100">
       <div className="flex items-center gap-4">
-        <span className="text-lg font-bold text-slate-500 uppercase tracking-tight">Show</span>
-        <select 
+        <span className="text-lg font-bold text-slate-500 uppercase tracking-tight">
+          Show
+        </span>
+        <select
           value={limit}
           onChange={(e) => updateLimit(e.target.value)}
           className="bg-white border border-slate-200 px-4 py-2 rounded-xl font-black text-black focus:outline-none cursor-pointer"
         >
-          {[10, 25, 50, 100].map(v => <option key={v} value={v}>{v}</option>)}
+          {[10, 25, 50, 100].map((v) => (
+            <option key={v} value={v}>
+              {v}
+            </option>
+          ))}
         </select>
-        <span className="text-lg font-bold text-slate-500 uppercase tracking-tight">per page</span>
+        <span className="text-lg font-bold text-slate-500 uppercase tracking-tight">
+          per page
+        </span>
       </div>
 
       <div className="flex items-center gap-3">
-        <button 
+        <button
           disabled={page <= 1}
           onClick={() => updatePage(page - 1)}
-          className="p-3 bg-white border border-slate-200 rounded-xl hover:bg-primary hover:text-white transition-all disabled:opacity-30 cursor-pointer shadow-sm"
+          className="p-3 bg-primary border border-slate-200 rounded-xl hover:bg-primary hover:text-white transition-all disabled:opacity-30 cursor-pointer shadow-sm"
         >
           <ChevronLeft size={24} />
         </button>
 
         <div className="flex items-center gap-2">
-           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-             <button
-                key={p}
-                onClick={() => updatePage(p)}
-                className={`w-12 h-12 rounded-xl text-lg font-black transition-all cursor-pointer ${
-                  page === p ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
-                }`}
-             >
-               {p}
-             </button>
-           ))}
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <button
+              key={p}
+              onClick={() => updatePage(p)}
+              className={`w-12 h-12 rounded-xl text-lg font-black transition-all cursor-pointer ${
+                page === p
+                  ? "bg-primary text-white shadow-lg shadow-primary/20"
+                  : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+              }`}
+            >
+              {p}
+            </button>
+          ))}
         </div>
 
-        <button 
+        <button
           disabled={page >= totalPages}
           onClick={() => updatePage(page + 1)}
-          className="p-3 bg-white border border-slate-200 rounded-xl hover:bg-primary hover:text-white transition-all disabled:opacity-30 cursor-pointer shadow-sm"
+          className="p-3 border bg-primary border-slate-200 rounded-xl hover:bg-primary hover:text-white transition-all disabled:opacity-30 cursor-pointer shadow-sm"
         >
           <ChevronRight size={24} />
         </button>
