@@ -61,3 +61,33 @@ export const bkashPayment = async ({
     };
   }
 };
+
+export const updateBkashPayment = async ({
+  transactionId,
+  status,
+}: {
+  transactionId: string;
+  status: "APPROVE" | "REJECT";
+}) => {
+  try {
+    const res = await serverFetch.patch(`/payment/bkash-approve`, {
+      body: JSON.stringify({
+        transactionId,
+        status,
+      }),
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+    const result = await res.json();
+    return result || null;
+  } catch (error: any) {
+    return {
+      success: false,
+      message:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Something went wrong while updating bkash payment.",
+    };
+  }
+};

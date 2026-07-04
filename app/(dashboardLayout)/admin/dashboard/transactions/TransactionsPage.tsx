@@ -1,11 +1,9 @@
 "use client";
 
 import React, { Suspense, useState } from "react";
-import { motion, Variants } from "framer-motion";
+import { AnimatePresence, motion, Variants } from "framer-motion";
 import {
   Receipt,
-  Search,
-  ArrowUpRight,
   CheckCircle2,
   XCircle,
   Clock,
@@ -13,10 +11,17 @@ import {
   User as UserIcon,
   ExternalLink,
   Wallet,
+  ShieldCheck,
+  X,
+  RefreshCcw,
+  Loader2,
 } from "lucide-react";
 import { format } from "date-fns";
 import TableToolbar from "@/components/shared/tables/TaleToolbar";
 import TablePagination from "@/components/shared/tables/TablePagination";
+import { toast } from "sonner";
+import { updateBkashPayment } from "@/services/subscription";
+import { useRouter } from "next/navigation";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -36,8 +41,12 @@ const itemVariants: Variants = {
 };
 
 export default function TransactionsPage({ tranRes }: { tranRes: any }) {
+  const [isPending, startTransition] = React.useTransition();
+  const [selectedTrx, setSelectedTrx] = useState<any>(null);
+  const [newStatus, setNewStatus] = useState<"APPROVE" | "REJECT">("APPROVE");
   const transactions = tranRes?.data || [];
   const meta = tranRes?.meta;
+  const router = useRouter();
 
   const transactionFilters = [
     {
@@ -58,6 +67,29 @@ export default function TransactionsPage({ tranRes }: { tranRes: any }) {
       ],
     },
   ];
+
+  const handleUpdateStatus = async () => {
+    if (!selectedTrx?.id) return;
+
+    startTransition(async () => {
+      const toastId = toast.loading("Updating transaction status...");
+
+      const res = await updateBkashPayment({
+        transactionId: selectedTrx.id,
+        status: newStatus,
+      });
+
+      if (res?.success) {
+        toast.success(`Payment status updated to ${newStatus}`, {
+          id: toastId,
+        });
+        setSelectedTrx(null);
+        router.refresh();
+      } else {
+        toast.error(res?.message || "Failed to update", { id: toastId });
+      }
+    });
+  };
 
   const getStatusStyle = (status: string) => {
     switch (status) {
@@ -215,6 +247,20 @@ export default function TransactionsPage({ tranRes }: { tranRes: any }) {
                         {getStatusIcon(trx?.status)}
                         {trx?.status}
                       </div>
+                      <div className="flex items-center gap-4">
+                        <button className="text-primary font-bold text-base flex items-center gap-1 hover:underline cursor-pointer transition-all">
+                          View Receipt <ExternalLink size={14} />
+                        </button>
+
+                        {trx?.status === "PENDING" && (
+                          <button
+                            onClick={() => setSelectedTrx(trx)}
+                            className="text-secondary font-bold text-base flex items-center gap-1 hover:underline cursor-pointer transition-all"
+                          >
+                            Manage <ShieldCheck size={16} />
+                          </button>
+                        )}
+                      </div>
                       <button className="text-primary font-bold text-base flex items-center gap-1 hover:underline cursor-pointer transition-all">
                         View Receipt <ExternalLink size={14} />
                       </button>
@@ -225,6 +271,95 @@ export default function TransactionsPage({ tranRes }: { tranRes: any }) {
             </motion.tbody>
           </table>
         </div>
+
+        <AnimatePresence>
+          {selectedTrx && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => !isPending && setSelectedTrx(null)}
+                className="absolute inset-0 bg-black/60 backdrop-blur-md"
+              />
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                className="relative w-full max-w-xl bg-white border border-slate-200 rounded-[40px] p-10 md:p-14 shadow-3xl overflow-hidden"
+              >
+                <button
+                  onClick={() => setSelectedTrx(null)}
+                  className="absolute top-8 right-8 p-2 text-slate-400 hover:text-black transition-colors cursor-pointer"
+                >
+                  <X size={28} />
+                </button>
+
+                <div className="text-center mb-10">
+                  <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 text-primary border border-primary/20">
+                    <RefreshCcw
+                      size={36}
+                      className={isPending ? "animate-spin" : ""}
+                    />
+                  </div>
+                  <h2 className="text-3xl font-black mb-4">Update Payment</h2>
+                  <p className="text-slate-500 text-xl font-medium px-4 leading-relaxed">
+                    Verify the TRX ID:{" "}
+                    <span className="text-black font-bold font-mono">
+                      {selectedTrx?.transactionId || "N/A"}
+                    </span>{" "}
+                    from your bKash statement.
+                  </p>
+                </div>
+
+                <div className="space-y-6 mb-12">
+                  <div className="space-y-3">
+                    <label className="text-base font-black uppercase tracking-widest text-slate-400 ml-2">
+                      Final Decision
+                    </label>
+                    <select
+                      value={newStatus}
+                      onChange={(e: any) => setNewStatus(e.target.value)}
+                      className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-xl font-bold text-black focus:border-primary outline-none transition-all cursor-pointer shadow-sm"
+                    >
+                      <option value="APPROVE">Approve Payment</option>
+                      <option value="REJECT">Reject Payment</option>
+                    </select>
+                  </div>
+
+                  <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 space-y-2">
+                    <p className="text-lg text-slate-600 font-medium">
+                      Customer:{" "}
+                      <span className="text-black font-bold">
+                        {selectedTrx?.user?.email}
+                      </span>
+                    </p>
+                    <p className="text-lg text-slate-600 font-medium">
+                      Amount:{" "}
+                      <span className="text-black font-bold">
+                        ৳{selectedTrx?.amount}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleUpdateStatus}
+                  disabled={isPending}
+                  className="w-full py-6 bg-primary hover:bg-indigo-700 text-white rounded-3xl font-black text-2xl transition-all flex items-center justify-center gap-4 cursor-pointer shadow-xl shadow-primary/20 disabled:opacity-50"
+                >
+                  {isPending ? (
+                    <Loader2 className="animate-spin" size={28} />
+                  ) : (
+                    <CheckCircle2 size={28} />
+                  )}
+                  {isPending ? "Syncing..." : "Apply Decision"}
+                </button>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
 
         {transactions?.length === 0 && (
           <div className="py-40 text-center">
