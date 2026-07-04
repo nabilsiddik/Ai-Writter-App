@@ -39,7 +39,7 @@ export default function Navbar({ user }: { user: any }) {
       title: "My Generations",
       desc: "View all your generations",
       icon: <Sparkles size={18} />,
-      link: user?.id ? "/my-generations" : '/login',
+      link: user?.id ? "/my-generations" : "/login",
     },
   ];
 
@@ -143,7 +143,7 @@ export default function Navbar({ user }: { user: any }) {
                       </p>
                       <p className="text-md font-bold">{user?.email}</p>
                       <p className=" text-gray-700">
-                        {user?.plan === "STARTER" ? (
+                        {user?.plan === "STARTAR" ? (
                           <div className="flex items-center gap-2">
                             <Crown size={20} />
                             Startar Plan
@@ -209,67 +209,68 @@ export default function Navbar({ user }: { user: any }) {
           ) : (
             <div>
               <Link href={"/login"} className="hidden md:block">
-              <Button className="w-full relative group overflow-hidden bg-primary disabled:from-gray-700 disabled:to-gray-800 text-white font-bold py-4 rounded-2xl shadow-xl transition-all flex items-center justify-end gap-2 cursor-pointer">
-                Login / Signup
-              </Button>
-            </Link>
-            <div className="relative cursor-pointer block md:hidden">
-              <button
-                onClick={() => setMobileProfileOpen(!mobileProfileOpen)}
-                className="w-10 h-10 rounded-full border-2 border-white/10 overflow-hidden hover:border-indigo-500 transition-colors bg-gradient-to-br cursor-pointer from-gray-700 to-gray-900 flex items-center justify-center"
-              >
-                <User size={20} className="text-gray-400 cursor-pointer" />
-              </button>
+                <Button className="w-full relative group overflow-hidden bg-primary disabled:from-gray-700 disabled:to-gray-800 text-white font-bold py-4 rounded-2xl shadow-xl transition-all flex items-center justify-end gap-2 cursor-pointer">
+                  Login / Signup
+                </Button>
+              </Link>
+              <div className="relative cursor-pointer block md:hidden">
+                <button
+                  onClick={() => setMobileProfileOpen(!mobileProfileOpen)}
+                  className="w-10 h-10 rounded-full border-2 border-white/10 overflow-hidden hover:border-indigo-500 transition-colors bg-gradient-to-br cursor-pointer from-gray-700 to-gray-900 flex items-center justify-center"
+                >
+                  <User size={20} className="text-gray-400 cursor-pointer" />
+                </button>
 
-              <div>
-                <AnimatePresence>
-                {mobileProfileOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="absolute right-0 mt-3 w-80  bg-white border border-primary/10 rounded-2xl p-4 shadow-2xl cursor-pointer"
-                  >
-                    <div className="px-3 py-2 border-b border-white/5 mb-1">
-                      
-                    </div>
+                <div>
+                  <AnimatePresence>
+                    {mobileProfileOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="absolute right-0 mt-3 w-80  bg-white border border-primary/10 rounded-2xl p-4 shadow-2xl cursor-pointer"
+                      >
+                        <div className="px-3 py-2 border-b border-white/5 mb-1"></div>
 
-                    <div className="mx-5 py-3 font-medium text-lg">
-                        <ul>
-                          <li className="py-2 mb-3 border-t border-b border-gray-200">
-                             <Link  className="flex items-center gap-3"
-                              href={'/tools'}
-                            >
-                              <ToolCase /> Tools
-                            </Link>
-                          </li>
-                         
-                          <li className="py-2 mb-3 border-t border-b border-gray-200">
-                             <Link  className="flex items-center gap-3"
-                              href={user?.id ? '/my-generations' : '/login'}
-                            >
-                              <Sparkles size={18} /> My Generations
-                            </Link>
-                          </li>
-                          <li className="py-2 mb-3 border-t border-b border-gray-200">
-                             <Link  className="flex items-center gap-3"
-                              href={'/pricing'}
-                            >
-                              <ToolCase /> Pricing
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                    <Link href={"/login"}>
-              <Button className="w-full relative group overflow-hidden bg-primary disabled:from-gray-700 disabled:to-gray-800 text-white font-bold py-4 rounded-2xl shadow-xl transition-all flex items-center gap-2 cursor-pointer">
-                Login / Signup
-              </Button>
-            </Link>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                        <div className="mx-5 py-3 font-medium text-lg">
+                          <ul>
+                            <li className="py-2 mb-3 border-t border-b border-gray-200">
+                              <Link
+                                className="flex items-center gap-3"
+                                href={"/tools"}
+                              >
+                                <ToolCase /> Tools
+                              </Link>
+                            </li>
+
+                            <li className="py-2 mb-3 border-t border-b border-gray-200">
+                              <Link
+                                className="flex items-center gap-3"
+                                href={user?.id ? "/my-generations" : "/login"}
+                              >
+                                <Sparkles size={18} /> My Generations
+                              </Link>
+                            </li>
+                            <li className="py-2 mb-3 border-t border-b border-gray-200">
+                              <Link
+                                className="flex items-center gap-3"
+                                href={"/pricing"}
+                              >
+                                <ToolCase /> Pricing
+                              </Link>
+                            </li>
+                          </ul>
+                        </div>
+                        <Link href={"/login"}>
+                          <Button className="w-full relative group overflow-hidden bg-primary disabled:from-gray-700 disabled:to-gray-800 text-white font-bold py-4 rounded-2xl shadow-xl transition-all flex items-center gap-2 cursor-pointer">
+                            Login / Signup
+                          </Button>
+                        </Link>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
-            </div>
             </div>
           )}
 

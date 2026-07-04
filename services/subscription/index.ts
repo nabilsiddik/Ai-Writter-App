@@ -23,3 +23,41 @@ export const subscribeToPlan = async (priceId: string) => {
     };
   }
 };
+
+export const bkashPayment = async ({
+  bkashNumber,
+  transactionId,
+  planName,
+}: {
+  bkashNumber: string;
+  transactionId: string;
+  planName: "STARTAR" | "PREMIUM" | undefined;
+}) => {
+  console.log({
+    bkashNumber,
+    transactionId,
+    planName,
+  });
+  try {
+    const res = await serverFetch.post(`/payment/bkash-payment`, {
+      body: JSON.stringify({
+        bkashNumber,
+        transactionId,
+        planName,
+      }),
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+    const result = await res.json();
+    return result || null;
+  } catch (error: any) {
+    return {
+      success: false,
+      message:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Something went wrong while bkash payment.",
+    };
+  }
+};
