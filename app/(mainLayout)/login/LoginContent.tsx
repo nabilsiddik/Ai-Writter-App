@@ -76,7 +76,8 @@ function LoginContent() {
         const res = await registerUser(null, { fullName, email, password });
         if (res?.success) {
           toast.success("Account created successfully");
-          router.push(`/verify-otp?email=${res?.data?.result?.email}`);
+          // router.push(`/verify-otp?email=${res?.data?.result?.email}`);
+          router.push(`/`);
           setIsLogin(true);
         } else {
           toast.error(res?.message || "Registration failed");

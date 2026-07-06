@@ -1,4 +1,4 @@
-# Ai Doc Writter - Automate document writting publish to platforms
+# Ai Writter - Automate document writting publish to platforms
 
 ## Description
 
@@ -23,6 +23,7 @@ It focuses on subscription based SASS model built with Node.js, Express.js, Type
 ## Key Features
 
 - **AI Content Generation:** High quality content generation using LLMs like Open Ai, Claude, Gemini, Lama etc and automate repetitive work.
+- **Export Import Products:** Export product from AMAZON, ALIEXPRESS, DARAZ and import to google sheet or direct upload to woocommerce after ai writter.
 - **Dynamic Tool Registry:** Very Scalable code to add new document types in langgraph in minutes without logic changes.
 - **Multi-Format Export:** Binary streaming for `.docx`, HTML-to-PDF via Puppeteer, and Google Docs, google drive, google sheet, woocommerce API integration.
 - **Subscription Lifecycle:** Full Stripe subscription implemented with different type plans.
