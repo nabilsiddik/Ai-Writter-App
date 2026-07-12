@@ -90,6 +90,49 @@ function LoginContent() {
     }
   };
 
+
+  // Demo admin login
+   const handleDemoLogin = async () => {
+    setLoading(true);
+    const email = 'demoadmin@gmail.com'
+    const password = '12345678'
+
+    try {
+      const res = await userLogin({ email, password, redirectTo: redirect });
+        if (res?.success) {
+          const detectedId = window.sessionStorage.getItem("DETECTED_EXT_ID");
+
+          console.log(detectedId, 'detec id');
+
+          if (detectedId && window.chrome?.runtime?.sendMessage) {
+            window.chrome.runtime.sendMessage(
+              detectedId,
+              { type: "AUTH_TOKEN", token: res.accessToken },
+              (response) => {
+                if (window.chrome.runtime.lastError) {
+                  console.error(
+                    "Sync Error:",
+                    window.chrome.runtime.lastError.message,
+                  );
+                } else {
+                  console.log("Extension Synced Successfully");
+                }
+              },
+            );
+          }
+
+          toast.success("Successfully Logged In");
+          router.push(res.redirectTo);
+        } else {
+          toast.error(res?.message || "Invalid credentials");
+        }
+    } catch (err: any) {
+      toast.error("Internal server error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleGoogleLogin = () => {
     window.location.href = `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/google`;
   };
@@ -178,6 +221,21 @@ function LoginContent() {
             ) : (
               <>
                 {isLogin ? "Sign In" : "Create Free Account"}
+                <ArrowRight size={24} />
+              </>
+            )}
+          </button>
+
+          <button
+            onClick={handleDemoLogin}
+            disabled={loading}
+            className="w-full bg-primary hover:bg-indigo-700 disabled:bg-slate-200 text-white font-black py-5 rounded-2xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-3 cursor-pointer text-xl"
+          >
+            {loading ? (
+              <Loader2 className="w-6 h-6 animate-spin" />
+            ) : (
+              <>
+                {isLogin ? "Demo Login" : "Demo Login"}
                 <ArrowRight size={24} />
               </>
             )}
