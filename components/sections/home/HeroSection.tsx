@@ -7,8 +7,8 @@ export default function Hero() {
 
   const handleDownload = () => {
     const link = document.createElement("a");
-    link.href = "/downloads/latest/ai-content-writter-extension.zip";
-    link.download = "AI-Content-Writer-Extension.zip";
+    link.href = "/downloads/latest/chrome-mv3-dev.zip";
+    link.download = "DroppEcommerce.zip";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
