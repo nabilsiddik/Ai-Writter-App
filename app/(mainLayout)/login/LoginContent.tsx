@@ -226,7 +226,7 @@ function LoginContent() {
             )}
           </button>
 
-          <button
+          {/* <button
             onClick={handleDemoLogin}
             disabled={loading}
             className="w-full bg-primary hover:bg-indigo-700 disabled:bg-slate-200 text-white font-black py-5 rounded-2xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-3 cursor-pointer text-xl"
@@ -239,7 +239,7 @@ function LoginContent() {
                 <ArrowRight size={24} />
               </>
             )}
-          </button>
+          </button> */}
         </form>
 
         <div className="relative flex items-center justify-center">

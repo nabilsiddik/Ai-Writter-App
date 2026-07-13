@@ -16,13 +16,14 @@ const tools = [
     title: "AI Assignment",
     icon: (
       <Image
-        src={"/images/icon/tools/graduate.png"}
+        // src={"/images/icon/tools/graduate.png"}
+        src={"/"}
         alt="AI Assignment"
         width={60}
         height={60}
       />
     ),
-    href: "/tools/assignment-writter",
+    href: "/",
     isNew: true,
   },
   {
@@ -118,7 +119,7 @@ export default function ToolGrid({ heading = true }: { heading?: boolean }) {
       {heading && (
         <div className="mb-10 border-b border-slate-200 pb-4">
           <h2 className="text-3xl lg:text-5xl font-black text-center mb-5">
-            Popular AI tools
+            Popular AI tools (Comming soon)
           </h2>
         </div>
       )}

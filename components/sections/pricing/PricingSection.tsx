@@ -28,7 +28,7 @@ export default function PricingSection({ user }: { user: any }) {
   const [paymentMethod, setPaymentMethod] = useState<"BKASH">();
   const [selectedSubscription, setSelectedSubscription] =
     useState<boolean>(false);
-  const [amount, setAmount] = useState<boolean>(false);
+  const [amount, setAmount] = useState<number>(0);
   const [plan, setPlan] = useState<"STARTAR" | "PREMIUM">();
   const router = useRouter();
 
@@ -73,10 +73,10 @@ export default function PricingSection({ user }: { user: any }) {
   const pricingPlans = [
     {
       name: "Free",
-      price: "0",
+      price: 0,
       plan: "FREE",
-      description: "Perfect for a quick assignment trial.",
-      limit: "2 AI Generations per day",
+      description: "Perfect For Testing.",
+      limit: "5 Product Import Export from Daraz, Amazon, Aliexpress",
       features: [
         "AI Content Generation",
         "Export as PDF",
@@ -89,10 +89,10 @@ export default function PricingSection({ user }: { user: any }) {
     },
     {
       name: "Starter",
-      price: "50",
+      price: 150,
       plan: "STARTAR",
       description: "The ideal choice for active students.",
-      limit: "10 AI Generations per day",
+      limit: "50 Product Import Export from Daraz, Amazon, Aliexpress",
       features: [
         "AI Content Generation",
         "Export as PDF",
@@ -106,10 +106,10 @@ export default function PricingSection({ user }: { user: any }) {
     },
     {
       name: "Premium",
-      price: "80",
+      price: 299,
       plan: "PREMIUM",
       description: "Unlimited power for high achievers.",
-      limit: "30 AI Generations per day",
+      limit: "100 Product Import Export from Daraz, Amazon, Aliexpress",
       features: [
         "AI Content Generation",
         "Export as PDF",
@@ -204,7 +204,7 @@ export default function PricingSection({ user }: { user: any }) {
                   <span className="text-slate-500 text-lg">/month</span>
                 </div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-lg text-black font-bold">
-                  <Zap size={16} className="text-primary" /> {plan.limit}
+                  <Zap size={30} className="text-primary" /> {plan.limit}
                 </div>
               </div>
 
@@ -227,6 +227,7 @@ export default function PricingSection({ user }: { user: any }) {
                   onClick={() => {
                     setPaymentMethodModalOpen(true);
                     setPlan((plan?.plan as "STARTAR") || "PREMIUM");
+                    setAmount(plan?.price)
                   }}
                   className={`w-full py-4 rounded-xl text-lg font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                     plan.isPopular
@@ -282,14 +283,14 @@ export default function PricingSection({ user }: { user: any }) {
                         Bkash Payment
                       </h2>
                       <p className="text-xl text-slate-500 mt-3 mb-5">
-                        Send Money 50 Taka to this Bkash Personal Number{" "}
+                        {`Send Money ${amount} Taka to this Bkash Personal Number`}{" "}
                         <span className="font-bold text-black">
                           01957282230
                         </span>{" "}
                         and then provide your Bkash number and transaction ID. I
                         will verify and approve it instantly and your
                         subscription will be active. Contact directly to
-                        whatsapp chat for any inquiry.
+                        whatsapp chat for any inquiry. <span className="text-green-700 font-bold underline"><Link target="_blank" href={'https://wa.me/8801957282230?text=Hello!%20I%20need%20help%20and%20support.'}>Whatsapp Me</Link></span>
                       </p>
                     </div>
 
@@ -354,9 +355,9 @@ export default function PricingSection({ user }: { user: any }) {
                     </p>
                     <div className="flex flex-wrap items-center gap-5">
                       <button
-                        onClick={() =>
-                          handleSubscription(plan as "STARTAR" | "PREMIUM")
-                        }
+                        // onClick={() =>
+                        //   handleSubscription(plan as "STARTAR" | "PREMIUM")
+                        // }
                         className="w-full py-5 bg-[rgb(98,90,250)] text-white rounded-xl font-bold text-xl hover:bg-indigo-700 transition-all cursor-pointer"
                       >
                         Stripe
