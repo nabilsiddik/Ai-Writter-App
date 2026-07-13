@@ -89,7 +89,7 @@ export default function PricingSection({ user }: { user: any }) {
     },
     {
       name: "Starter",
-      price: 150,
+      price: 299,
       plan: "STARTAR",
       description: "The ideal choice for active students.",
       limit: "50 Product Import Export from Daraz, Amazon, Aliexpress",
@@ -106,7 +106,7 @@ export default function PricingSection({ user }: { user: any }) {
     },
     {
       name: "Premium",
-      price: 299,
+      price: 499,
       plan: "PREMIUM",
       description: "Unlimited power for high achievers.",
       limit: "100 Product Import Export from Daraz, Amazon, Aliexpress",
