@@ -213,7 +213,7 @@ function MarqueeSection() {
 
   return (
     <div className="items-center overflow-hidden">
-      <div className="max-w-7xl mx-auto px-5 my-20 flex flex-col gap-y-6">
+      <div className="max-w-7xl mx-auto px-5 my-16 flex flex-col gap-y-6">
         <Marquee logos={logos1} />
         <Marquee logos={logos2} direction="reverse" />
       </div>

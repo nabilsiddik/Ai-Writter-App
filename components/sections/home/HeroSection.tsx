@@ -15,8 +15,11 @@ export default function Hero() {
 };
 
   return (
-    <section className="bg-slate-50 py-20 px-6 border-b border-slate-200">
+    <section className="bg-slate-50 py-10 px-6 border-b border-slate-200">
       <div className="max-w-4xl mx-auto text-center">
+        <div className="mb-10 flex items-center justify-center">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/0QH8vEmWoRE?si=QmukB7V8GGd8Zdbh" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+        </div>
         <h1 className="text-3xl md:text-5xl font-black mb-6 text-black tracking-tight">
           Ai Content Writter will help you to write Ai content in different
           sector.
